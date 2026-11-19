@@ -1,3 +1,5 @@
+<p align="center"><img src="packaging/mcpb/icon.svg" width="128" alt=""></p>
+
 # Day One MCP for Claude
 
 **Search your [Day One](https://dayoneapp.com) journal with AI, on Windows, Mac or Linux.**

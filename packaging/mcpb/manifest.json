@@ -16,8 +16,15 @@
   "homepage": "https://github.com/kachihro/dayone-mcp",
   "documentation": "https://github.com/kachihro/dayone-mcp#readme",
   "support": "https://github.com/kachihro/dayone-mcp/issues",
+  "icon": "icon.png",
   "license": "MIT",
-  "keywords": ["day one", "dayone", "journal", "diary", "search"],
+  "keywords": [
+    "day one",
+    "dayone",
+    "journal",
+    "diary",
+    "search"
+  ],
   "server": {
     "type": "binary",
     "entry_point": "server/DayOneMcp.exe",
@@ -38,14 +45,34 @@
     }
   },
   "tools": [
-    { "name": "search_entries", "description": "Keyword search with date, journal, tag, starred and media filters" },
-    { "name": "on_this_day", "description": "Entries from this day in previous years" },
-    { "name": "list_journals", "description": "List your journals" },
-    { "name": "list_entries", "description": "Browse entries in a journal" },
-    { "name": "read_entry", "description": "Read one entry in full" },
-    { "name": "sync_journals", "description": "Download the latest entries from Day One" }
+    {
+      "name": "search_entries",
+      "description": "Keyword search with date, journal, tag, starred and media filters"
+    },
+    {
+      "name": "on_this_day",
+      "description": "Entries from this day in previous years"
+    },
+    {
+      "name": "list_journals",
+      "description": "List your journals"
+    },
+    {
+      "name": "list_entries",
+      "description": "Browse entries in a journal"
+    },
+    {
+      "name": "read_entry",
+      "description": "Read one entry in full"
+    },
+    {
+      "name": "sync_journals",
+      "description": "Download the latest entries from Day One"
+    }
   ],
   "compatibility": {
-    "platforms": ["win32"]
+    "platforms": [
+      "win32"
+    ]
   }
 }
