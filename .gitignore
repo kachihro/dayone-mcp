@@ -1,0 +1,12 @@
+bin/
+obj/
+out/
+publish/
+artifacts/
+smoke/
+*.zip
+*.mcpb
+*.tar.gz
+.vs/
+.vscode/
+*.user

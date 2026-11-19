@@ -1,0 +1,51 @@
+{
+  "manifest_version": "0.3",
+  "name": "dayone-mcp",
+  "display_name": "Day One Journal",
+  "version": "0.0.0",
+  "description": "Search your Day One journal: keyword search, On This Day, browse and read entries.",
+  "long_description": "Lets Claude search and read your Day One journal on Windows, using the official Day One CLI (@dayone/cli). Read-only: Claude cannot create, change or delete entries.\n\n**Before installing:** install Node.js LTS, then run `npm install -g @dayone/cli`, `dayone setup` and `dayone sync` in PowerShell (or use the one-line installer from the GitHub page, which does all of this).",
+  "author": {
+    "name": "kachihro",
+    "url": "https://github.com/kachihro"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kachihro/dayone-mcp"
+  },
+  "homepage": "https://github.com/kachihro/dayone-mcp",
+  "documentation": "https://github.com/kachihro/dayone-mcp#readme",
+  "support": "https://github.com/kachihro/dayone-mcp/issues",
+  "license": "MIT",
+  "keywords": ["day one", "dayone", "journal", "diary", "search"],
+  "server": {
+    "type": "binary",
+    "entry_point": "server/DayOneMcp.exe",
+    "mcp_config": {
+      "command": "${__dirname}/server/DayOneMcp.exe",
+      "args": [],
+      "env": {
+        "DAYONE_CLI_PATH": "${user_config.dayone_cli_path}"
+      }
+    }
+  },
+  "user_config": {
+    "dayone_cli_path": {
+      "type": "file",
+      "title": "Day One CLI (optional)",
+      "description": "Leave blank to find it automatically. Only needed if dayone.exe isn't in npm's usual global folder.",
+      "required": false
+    }
+  },
+  "tools": [
+    { "name": "search_entries", "description": "Keyword search with date, journal, tag, starred and media filters" },
+    { "name": "on_this_day", "description": "Entries from this day in previous years" },
+    { "name": "list_journals", "description": "List your journals" },
+    { "name": "list_entries", "description": "Browse entries in a journal" },
+    { "name": "read_entry", "description": "Read one entry in full" },
+    { "name": "sync_journals", "description": "Download the latest entries from Day One" }
+  ],
+  "compatibility": {
+    "platforms": ["win32"]
+  }
+}

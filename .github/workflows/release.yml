@@ -1,0 +1,48 @@
+name: Release
+
+# Create a release by pushing a version tag:
+#   git tag v1.0.0
+#   git push origin v1.0.0
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write   # needed to create the GitHub release
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Build packages for all platforms
+        run: scripts/package.sh "${GITHUB_REF_NAME}"
+
+      - name: Smoke test the Linux build
+        env:
+          DO_NOT_TRACK: '1'
+        run: |
+          npm install -g @dayone/cli@latest
+          mkdir -p smoke && tar -xzf artifacts/dayone-mcp-linux-x64.tar.gz -C smoke
+          DAYONE="$(npm root -g)/@dayone/cli/node_modules/@dayone/cli-linux-x64-no-embeddings/dayone"
+          python3 tests/smoke_test.py smoke/DayOneMcp "$DAYONE"
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          NOTES="$(awk -v v="$VERSION" '$0 ~ "^## \\[?"v"\\]?" {f=1; next} /^## / && f {exit} f' CHANGELOG.md)"
+          [ -n "$NOTES" ] || NOTES="See the README for install instructions."
+          gh release create "$GITHUB_REF_NAME" artifacts/* \
+            --title "dayone-mcp $VERSION" \
+            --notes "$NOTES"
