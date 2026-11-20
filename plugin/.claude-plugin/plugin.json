@@ -1,0 +1,29 @@
+{
+  "name": "dayone",
+  "displayName": "Day One Journal",
+  "version": "1.0.0",
+  "description": "Search and reflect on your Day One journal: keyword search, On This Day, and reflections over any period. Read-only.",
+  "author": {
+    "name": "kachihro",
+    "url": "https://github.com/kachihro"
+  },
+  "homepage": "https://github.com/kachihro/dayone-mcp",
+  "repository": "https://github.com/kachihro/dayone-mcp",
+  "license": "MIT",
+  "icon": "./.claude-plugin/icon.png",
+  "keywords": [
+    "day one",
+    "dayone",
+    "journal",
+    "diary",
+    "mcp"
+  ],
+  "network": {
+    "hosts": [
+      "github.com",
+      "objects.githubusercontent.com",
+      "release-assets.githubusercontent.com",
+      "dayone.me"
+    ]
+  }
+}

@@ -15,6 +15,9 @@ set -euo pipefail
 
 REPO="kachihro/dayone-mcp"
 SERVER_NAME="dayone"
+MARKETPLACE_NAME="dayone-mcp"
+PLUGIN_ID="dayone@dayone-mcp"
+MARKETPLACE_SOURCE="${DAYONE_MCP_MARKETPLACE:-$REPO}"   # for forks and testing
 INSTALL_DIR="${DAYONE_MCP_HOME:-$HOME/.local/share/dayone-mcp}"
 EXE="$INSTALL_DIR/DayOneMcp"
 VERSION="${DAYONE_MCP_VERSION:-}"
@@ -111,7 +114,12 @@ c "35" "  Day One MCP for Claude  -  https://github.com/$REPO"
 # ------------------------------------------------------------------------------------------------ uninstall
 if [ "$UNINSTALL" = 1 ]; then
   step "Uninstalling dayone-mcp"
-  if [ "$SKIP_CODE" = 0 ] && command -v claude >/dev/null 2>&1; then claude mcp remove --scope user "$SERVER_NAME" >/dev/null 2>&1 || true; ok "Removed from Claude Code"; fi
+  if [ "$SKIP_CODE" = 0 ] && command -v claude >/dev/null 2>&1; then
+    claude plugin uninstall "$PLUGIN_ID" >/dev/null 2>&1 || true
+    claude plugin marketplace remove "$MARKETPLACE_NAME" >/dev/null 2>&1 || true
+    claude mcp remove --scope user "$SERVER_NAME" >/dev/null 2>&1 || true
+    ok "Removed from Claude Code"
+  fi
   if [ -f "$DESKTOP_CFG" ] && command -v node >/dev/null 2>&1; then desktop_config remove && ok "Removed from Claude Desktop (restart it to finish)"; fi
   rm -rf "$INSTALL_DIR" && ok "Deleted $INSTALL_DIR"
   info "The Day One CLI was left installed. Remove it with: npm uninstall -g @dayone/cli"
@@ -179,12 +187,19 @@ REGISTERED=""
 if [ "$SKIP_CODE" = 0 ]; then
   step "Connecting to Claude Code"
   if command -v claude >/dev/null 2>&1; then
+    # The Claude Code plugin brings the MCP server plus /dayone:* commands. It replaces any older
+    # "claude mcp add" registration, so remove that first to avoid duplicate tools.
     claude mcp remove --scope user "$SERVER_NAME" >/dev/null 2>&1 || true
-    if claude mcp add --scope user --transport stdio "$SERVER_NAME" -- "$EXE"; then ok "Added for all your projects (user scope)"; REGISTERED="$REGISTERED code"
-    else warn "That didn't work. You can run it yourself: claude mcp add --scope user dayone -- \"$EXE\""; fi
+    if claude plugin marketplace add "$MARKETPLACE_SOURCE" && claude plugin install "$PLUGIN_ID"; then
+      ok "Installed the Day One plugin for Claude Code"; REGISTERED="$REGISTERED code"
+    else
+      warn "Couldn't install the plugin, so adding the MCP server directly instead."
+      if claude mcp add --scope user --transport stdio "$SERVER_NAME" -- "$EXE"; then ok "Added for all your projects (user scope)"; REGISTERED="$REGISTERED code"
+      else warn "That didn't work either. In Claude Code, run: /plugin install dayone --marketplace $REPO"; fi
+    fi
   else
-    info "Claude Code isn't installed (or not on PATH). Later, run:"
-    info "  claude mcp add --scope user dayone -- \"$EXE\""
+    info "Claude Code isn't installed (or not on PATH). Later, in Claude Code run:"
+    info "  /plugin install dayone --marketplace $REPO"
   fi
 fi
 
@@ -197,6 +212,6 @@ fi
 echo
 c "32" "  All done!"
 case "$REGISTERED" in *desktop*) echo "  - Claude Desktop: fully quit it (Cmd+Q / Quit) and reopen it." ;; esac
-case "$REGISTERED" in *code*) echo "  - Claude Code: start a new session, then run /mcp to see \"dayone\" connected." ;; esac
+case "$REGISTERED" in *code*) echo "  - Claude Code: start a new session and try /dayone:on-this-day (or /dayone:setup to check everything)." ;; esac
 echo "  Then ask: 'What did I write on this day in previous years?'"
 echo

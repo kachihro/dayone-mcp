@@ -38,6 +38,9 @@ $ProgressPreference = 'SilentlyContinue'   # makes Invoke-WebRequest much faster
 
 $Repo       = 'kachihro/dayone-mcp'
 $ServerName = 'dayone'
+$MarketplaceName = 'dayone-mcp'
+$PluginId = 'dayone@dayone-mcp'
+$MarketplaceSource = if ($env:DAYONE_MCP_MARKETPLACE) { $env:DAYONE_MCP_MARKETPLACE } else { $Repo }   # for forks and testing
 $InstallDir = Join-Path $env:LOCALAPPDATA 'Programs\dayone-mcp'
 $ExePath    = Join-Path $InstallDir 'DayOneMcp.exe'
 $env:DO_NOT_TRACK = '1'   # keep the Day One CLI's optional telemetry off while we run it
@@ -50,6 +53,18 @@ function Ask($q) {
     if ($Yes) { return $true }
     $a = Read-Host "    $q [Y/n]"
     return ($a -eq '' -or $a -match '^(y|yes)$')
+}
+# Runs a native command without letting its stderr output become a terminating error
+# (Windows PowerShell 5.1 does that when $ErrorActionPreference is 'Stop'). Returns the exit code.
+function Invoke-Native([scriptblock] $Command, [switch] $Quiet) {
+    $old = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        if ($Quiet) { & $Command 2>&1 | Out-Null } else { & $Command 2>&1 | ForEach-Object { Write-Host "    $_" } }
+        return $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $old
+    }
 }
 function Refresh-Path {
     $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' +
@@ -90,6 +105,7 @@ function Update-DesktopConfig([string] $Path, [scriptblock] $Change) {
 
 # Finds the native dayone.exe inside npm's global folder (calling it directly avoids cmd.exe quoting issues).
 function Find-DayOneExe {
+    $ErrorActionPreference = 'Continue'   # local to this function (see Invoke-Native)
     $roots = @()
     try { $roots += (& npm root -g 2>$null | Select-Object -First 1) } catch { }
     $roots += (Join-Path $env:APPDATA 'npm\node_modules')
@@ -103,6 +119,7 @@ function Find-DayOneExe {
 }
 
 function Get-JournalCount([string] $DayOneExe) {
+    $ErrorActionPreference = 'Continue'   # local to this function: stderr warnings must not abort the read
     try { return [int]((& $DayOneExe list journals 2>$null | Out-String | ConvertFrom-Json).count) } catch { return 0 }
 }
 
@@ -112,8 +129,10 @@ Write-Host '  Day One MCP for Claude  -  https://github.com/kachihro/dayone-mcp'
 # ---------------------------------------------------------------------------------------------- uninstall
 if ($Uninstall) {
     Step 'Uninstalling dayone-mcp'
-    if (Get-Command claude -ErrorAction SilentlyContinue) {
-        & claude mcp remove --scope user $ServerName 2>$null | Out-Null
+    if (-not $SkipClaudeCode -and (Get-Command claude -ErrorAction SilentlyContinue)) {
+        Invoke-Native -Quiet { claude plugin uninstall "$PluginId" } | Out-Null
+        Invoke-Native -Quiet { claude plugin marketplace remove $MarketplaceName } | Out-Null
+        Invoke-Native -Quiet { claude mcp remove --scope user $ServerName } | Out-Null
         Ok 'Removed from Claude Code'
     }
     $cfg = Get-DesktopConfigPath
@@ -210,13 +229,23 @@ $registered = @()
 if (-not $SkipClaudeCode) {
     Step 'Connecting to Claude Code'
     if (Get-Command claude -ErrorAction SilentlyContinue) {
-        & claude mcp remove --scope user $ServerName 2>$null | Out-Null
-        & claude mcp add --scope user --transport stdio $ServerName -- $ExePath
-        if ($LASTEXITCODE -eq 0) { Ok 'Added for all your projects (user scope)'; $registered += 'Claude Code' }
-        else { Warn "That didn't work. You can run it yourself: claude mcp add --scope user dayone -- `"$ExePath`"" }
+        # The Claude Code plugin brings the MCP server plus /dayone:* commands. It replaces any
+        # older "claude mcp add" registration, so remove that first to avoid duplicate tools.
+        Invoke-Native -Quiet { claude mcp remove --scope user $ServerName } | Out-Null
+        $code = Invoke-Native { claude plugin marketplace add $MarketplaceSource }
+        if ($code -eq 0) { $code = Invoke-Native { claude plugin install "$PluginId" } }
+        if ($code -eq 0) {
+            Ok 'Installed the Day One plugin for Claude Code'
+            $registered += 'Claude Code'
+        } else {
+            Warn "Couldn't install the plugin, so adding the MCP server directly instead."
+            $code = Invoke-Native { claude mcp add --scope user --transport stdio $ServerName -- $ExePath }
+            if ($code -eq 0) { Ok 'Added for all your projects (user scope)'; $registered += 'Claude Code' }
+            else { Warn "That didn't work either. In Claude Code, run: /plugin install dayone --marketplace $Repo" }
+        }
     } else {
-        Info "Claude Code isn't installed (or not on PATH). Later, run:"
-        Info "  claude mcp add --scope user dayone -- `"$ExePath`""
+        Info "Claude Code isn't installed (or not on PATH). Later, in Claude Code run:"
+        Info "  /plugin install dayone --marketplace $Repo"
     }
 }
 
@@ -239,7 +268,7 @@ if ($registered -contains 'Claude Desktop') {
     Write-Host '  - Claude Desktop: fully quit it (right-click the tray icon > Quit) and reopen it.'
 }
 if ($registered -contains 'Claude Code') {
-    Write-Host '  - Claude Code: start a new session, then run /mcp to see "dayone" connected.'
+    Write-Host '  - Claude Code: start a new session and try /dayone:on-this-day (or /dayone:setup to check everything).'
 }
 Write-Host "  Then ask: 'What did I write on this day in previous years?'"
 Write-Host ''

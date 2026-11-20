@@ -1,0 +1,15 @@
+{
+  "name": "dayone-mcp",
+  "description": "Search your Day One journal from Claude Code.",
+  "owner": {
+    "name": "kachihro",
+    "url": "https://github.com/kachihro"
+  },
+  "plugins": [
+    {
+      "name": "dayone",
+      "source": "./plugin",
+      "description": "Search and reflect on your Day One journal: keyword search, On This Day, and reflections over any period. Read-only."
+    }
+  ]
+}

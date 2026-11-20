@@ -1,0 +1,17 @@
+{
+  "description": "Downloads the dayone-mcp server binary on first use, so the MCP server starts quickly.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/launcher/dayone-mcp.mjs\" --prefetch",
+            "timeout": 300
+          }
+        ]
+      }
+    ]
+  }
+}

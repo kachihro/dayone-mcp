@@ -21,6 +21,8 @@ Please include:
 | `src/DayOneMcp/DayOneCli.cs` | Finds and runs the Day One CLI |
 | `install.ps1`, `install.sh` | One-line installers |
 | `packaging/mcpb/manifest.json` | Claude Desktop extension manifest |
+| `.claude-plugin/marketplace.json` | Claude Code marketplace (lists the plugin) |
+| `plugin/` | Claude Code plugin: `.mcp.json`, `launcher/` (downloads and runs the server), `skills/`, `hooks/` |
 | `scripts/package.sh` | Builds all release packages |
 | `tests/smoke_test.py` | End-to-end MCP test against the real Day One CLI |
 
@@ -35,6 +37,17 @@ python3 tests/smoke_test.py out/DayOneMcp "$(npm root -g)/@dayone/cli/node_modul
 To test an installer against a local build, set `DAYONE_MCP_URL` to the package path, for example
 `DAYONE_MCP_URL=file:///path/to/dayone-mcp-linux-x64.tar.gz bash install.sh`.
 
+### Working on the Claude Code plugin
+
+```
+claude plugin validate --strict ./plugin
+DAYONE_MCP_EXE=$PWD/out/DayOneMcp claude --plugin-dir ./plugin
+```
+
+`DAYONE_MCP_EXE` makes the launcher run your local build instead of downloading a release.
+`DAYONE_MCP_DOWNLOAD_BASE` points the download at another server, for example a fork's releases.
+Edits to skills take effect after `/reload-plugins`.
+
 ## Guidelines
 
 - Keep tools **read-only** unless there's a clear, opt-in reason not to. People's journals are precious.
@@ -44,6 +57,10 @@ To test an installer against a local build, set `DAYONE_MCP_URL` to the package 
 
 ## Releasing (maintainers)
 
-1. Update the version and notes in `CHANGELOG.md`.
-2. Tag and push: `git tag v1.0.1 && git push origin v1.0.1`.
+1. Update the version in **`plugin/.claude-plugin/plugin.json`** and the notes in `CHANGELOG.md`.
+   The plugin downloads the release that matches its version, and the release build refuses to run
+   if the two don't match.
+2. Commit, then tag and push straight away: `git tag v1.0.1 && git push origin main v1.0.1`.
+   Plugin users who update before the release finishes building get a download error until it's
+   published, a few minutes later.
 3. GitHub Actions builds every platform, runs the smoke test and publishes the release.

@@ -23,7 +23,40 @@ your entries, but can't create, change or delete them.
 
 ## Install
 
-### Windows
+### Claude Code plugin ⭐ (easiest for Claude Code)
+
+In Claude Code, run:
+
+```
+/plugin install dayone --marketplace kachihro/dayone-mcp
+```
+
+(On Claude Code older than 2.1.275, run `/plugin marketplace add kachihro/dayone-mcp` first, then
+`/plugin install dayone@dayone-mcp`.)
+
+Then run **`/dayone:setup`**. Claude checks Node.js and the Day One CLI and walks you through signing
+in to Day One. You'll sign in yourself in a terminal; Claude never sees your password. The plugin
+downloads its server automatically the first time (about 40 MB, checked against the release's
+SHA-256 checksums).
+
+The plugin adds these commands:
+
+| Command | What it does |
+|---|---|
+| `/dayone:on-this-day [date]` | Your memories from today (or any date) in past years |
+| `/dayone:search <topic>` | Searches with several related keywords and summarises what it finds |
+| `/dayone:reflect [period]` | Highlights, themes and mood for a period, e.g. `last month` or `2024` |
+| `/dayone:setup` | Checks everything is working |
+
+You can also just ask questions in plain English, like *"what was I worried about before the move?"*.
+The plugin teaches Claude how to search a journal well.
+
+### Everything at once: one-line installers
+
+These set up the Day One CLI and connect **both** Claude Code (using the plugin above) and
+Claude Desktop.
+
+#### Windows
 
 Open **PowerShell** and paste:
 
@@ -31,7 +64,7 @@ Open **PowerShell** and paste:
 irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.ps1 | iex
 ```
 
-### macOS / Linux
+#### macOS / Linux
 
 Open **Terminal** and paste:
 
@@ -44,11 +77,11 @@ The installer walks you through everything and checks each step:
 1. **Node.js**: offers to install it if you don't have it (it's needed by the Day One CLI)
 2. **Day One CLI**: installs it, then signs you in to Day One and downloads your journals
 3. **dayone-mcp**: downloads the latest release
-4. **Claude**: connects it to **Claude Code** (for all your projects) and **Claude Desktop**
+4. **Claude**: installs the **Claude Code** plugin and connects **Claude Desktop**
 
 Then:
 
-- **Claude Code**: start a new session and type `/mcp`. You should see `dayone` connected.
+- **Claude Code**: start a new session and try `/dayone:on-this-day`.
 - **Claude Desktop**: fully quit it (tray icon → Quit on Windows, Cmd+Q on Mac) and reopen it.
 
 Run the same command again any time to **update**.
@@ -99,11 +132,13 @@ Run the same command again any time to **update**.
 
 ### Uninstall
 
-Windows:
+Plugin only (in Claude Code): `/plugin uninstall dayone@dayone-mcp`
+
+Everything, Windows:
 ```powershell
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.ps1))) -Uninstall
 ```
-macOS / Linux:
+Everything, macOS / Linux:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.sh | bash -s -- --uninstall
 ```
@@ -150,8 +185,10 @@ Claude Code / Claude Desktop
 
 | Problem | Fix |
 |---|---|
+| Something's not working in Claude Code | Run `/dayone:setup`. It checks each piece and tells you what to fix. |
+| `plugin:dayone:dayone` failed in `/mcp` | The first start downloads the server, and on a slow connection that can time out. Restart Claude Code. |
 | `dayone` doesn't show in `/mcp` | Start a **new** Claude Code session after installing. |
-| "Could not find the Day One CLI" | Run the installer again. It saves the CLI's location next to the server. Or set `DAYONE_CLI_PATH` to the full path of the `dayone` executable. |
+| "Could not find the Day One CLI" | Run the installer again. It saves the CLI's location next to the server. Or set `DAYONE_CLI_PATH` to the full path of the `dayone` executable (for the Claude Code plugin, add it under `"env"` in `~/.claude/settings.json`). |
 | No results, or "run dayone sync first" | Run `dayone sync`, or ask Claude to sync. |
 | Search misses things | On Windows and Intel Macs the Day One CLI only does keyword search (not meaning-based search). Ask Claude to try related words. |
 | Encrypted journals show nothing | Run `dayone auth key-set` with your Day One encryption key. |

@@ -44,3 +44,19 @@ jobs:
 
       - name: Validate Claude Desktop extension manifest
         run: npx --yes @anthropic-ai/mcpb@2.1.2 validate packaging/mcpb/manifest.json
+
+      - name: Validate Claude Code plugin and marketplace
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude plugin validate --strict .
+          claude plugin validate --strict ./plugin
+
+      - name: Smoke test through the Claude Code plugin launcher
+        env:
+          DO_NOT_TRACK: '1'
+          DAYONE_MCP_EXE: ${{ github.workspace }}/out/DayOneMcp   # skip the download; test the passthrough
+        run: |
+          DAYONE="$(npm root -g)/@dayone/cli/node_modules/@dayone/cli-linux-x64-no-embeddings/dayone"
+          printf '#!/bin/sh\nexec node "%s/plugin/launcher/dayone-mcp.mjs" "$@"\n' "$GITHUB_WORKSPACE" > via-launcher.sh
+          chmod +x via-launcher.sh
+          python3 tests/smoke_test.py ./via-launcher.sh "$DAYONE"

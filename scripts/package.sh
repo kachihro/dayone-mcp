@@ -8,12 +8,20 @@
 #   dayone-mcp-win-x64.zip          DayOneMcp.exe + install.ps1 + README.md   (used by install.ps1)
 #   dayone-mcp-win-x64.mcpb         Claude Desktop extension (double-click to install)
 #   dayone-mcp-<rid>.tar.gz         osx-arm64, osx-x64, linux-x64, linux-arm64 (used by install.sh)
-#   SHA256SUMS.txt
+#   dayone-mcp-<rid>[.exe]          raw binaries (downloaded by the Claude Code plugin's launcher)
+#   SHA256SUMS.txt                  checked by the plugin launcher before running anything it downloads
 
 set -euo pipefail
 VERSION="${1:?usage: scripts/package.sh <version, e.g. 1.2.3>}"
 VERSION="${VERSION#v}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+# The plugin launcher downloads the release matching plugin.json's version, so they must agree.
+PLUGIN_VERSION="$(node -p "require('$ROOT/plugin/.claude-plugin/plugin.json').version")"
+if [ "$PLUGIN_VERSION" != "$VERSION" ]; then
+  echo "plugin/.claude-plugin/plugin.json has version $PLUGIN_VERSION, but this release is $VERSION. Update it first." >&2
+  exit 1
+fi
 OUT="$ROOT/artifacts"
 BUILD="$(mktemp -d)"; trap 'rm -rf "$BUILD"' EXIT
 export DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1
@@ -26,8 +34,10 @@ for RID in win-x64 osx-arm64 osx-x64 linux-x64 linux-arm64; do
   if [ "$RID" = "win-x64" ]; then
     cp "$ROOT/install.ps1" "$ROOT/README.md" "$BUILD/$RID/"
     (cd "$BUILD/$RID" && zip -q -9 "$OUT/dayone-mcp-$RID.zip" DayOneMcp.exe install.ps1 README.md)
+    cp "$BUILD/$RID/DayOneMcp.exe" "$OUT/dayone-mcp-$RID.exe"    # raw binary for the Claude Code plugin launcher
   else
     tar -czf "$OUT/dayone-mcp-$RID.tar.gz" -C "$BUILD/$RID" DayOneMcp
+    cp "$BUILD/$RID/DayOneMcp" "$OUT/dayone-mcp-$RID"            # raw binary for the Claude Code plugin launcher
   fi
 done
 
