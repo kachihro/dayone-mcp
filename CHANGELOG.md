@@ -2,7 +2,7 @@
 
 All notable changes to this project are listed here. Versions follow [semantic versioning](https://semver.org).
 
-## [1.0.3] - 22/11/2026
+## [1.0.4] - 22/11/2026
 
 Works with nvm, smoother updates and Claude Desktop restarts on Windows, one fewer installer question,
 and a new, easier README.
