@@ -2,7 +2,9 @@
 
 All notable changes to this project are listed here. Versions follow [semantic versioning](https://semver.org).
 
-## Unreleased
+## [1.0.2] - 22/11/2026
+
+A new icon and kachihro branding, and friendlier installers. Search and reading are unchanged.
 
 ### Branding
 - New app icon: a journal with a ribbon bookmark and the kachihro gem, on the kachihro gradient.
