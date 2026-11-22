@@ -27,7 +27,8 @@
 param(
     [string] $Version = $env:DAYONE_MCP_VERSION,          # e.g. v1.0.0 (default: latest)
     [switch] $Uninstall = [bool]$env:DAYONE_MCP_UNINSTALL,
-    [switch] $Configure = [bool]$env:DAYONE_MCP_CONFIGURE,   # only sign in, add your key and sync (what configure.ps1 runs)
+    [switch] $Configure = [bool]$env:DAYONE_MCP_CONFIGURE,
+    [switch] $Everything = [bool]$env:DAYONE_MCP_EVERYTHING, # with -Uninstall: also sign out and remove the Day One CLI and its data   # only sign in, add your key and sync (what configure.ps1 runs)
     [switch] $SkipClaudeCode = [bool]$env:DAYONE_MCP_SKIP_CLAUDE_CODE,
     [switch] $SkipClaudeDesktop = [bool]$env:DAYONE_MCP_SKIP_CLAUDE_DESKTOP,
     [switch] $Yes = [bool]$env:DAYONE_MCP_YES             # answer "yes" to every prompt
@@ -64,6 +65,11 @@ function Ask($q) {
     if ($Yes) { return $true }
     $a = Read-Host "    $q [Y/n]"
     return ($a -eq '' -or $a -match '^(y|yes)$')
+}
+# Like Ask, but defaults to No: for anything that removes your data.
+function AskNo($q) {
+    $a = Read-Host "    $q [y/N]"
+    return ($a -match '^(y|yes)$')
 }
 # Runs a native command without letting its stderr output become a terminating error
 # (Windows PowerShell 5.1 does that when $ErrorActionPreference is 'Stop'). Returns the exit code.
@@ -284,7 +290,8 @@ Write-Host '  github.com/kachihro/dayone-mcp' -ForegroundColor DarkGray
 
 # ---------------------------------------------------------------------------------------------- uninstall
 if ($Uninstall) {
-    Step broom 'Uninstalling'
+    Part broom 'Uninstalling Day One MCP'
+    Step bolt 'Claude'
     if (-not $SkipClaudeCode -and (Get-Command claude -ErrorAction SilentlyContinue)) {
         Invoke-Native -Quiet { claude plugin uninstall "$PluginId" } | Out-Null
         Invoke-Native -Quiet { claude plugin marketplace remove $MarketplaceName } | Out-Null
@@ -296,8 +303,45 @@ if ($Uninstall) {
         Update-DesktopConfig $cfg { param($s) $s.Remove($ServerName) }
         Ok 'Removed from Claude Desktop'
     }
-    if (Test-Path $InstallDir) { Remove-Item $InstallDir -Recurse -Force; Ok 'Removed the server' }
-    Info 'The Day One CLI is still installed (remove it with: npm uninstall -g @dayone/cli)'
+    if (Test-Path $InstallDir) {
+        Get-Process DayOneMcp -ErrorAction SilentlyContinue |
+            Where-Object { $_.Path -eq $ExePath } | Stop-Process -Force -ErrorAction SilentlyContinue
+        Remove-Item $InstallDir -Recurse -Force
+        Ok 'Removed the server'
+    }
+
+    # Optionally go back to a clean slate: sign out, remove the Day One CLI and what it downloaded.
+    $dayoneExe = Find-DayOneExe
+    $cliDirs = @((Join-Path $env:APPDATA 'dayone-cli'), (Join-Path $env:LOCALAPPDATA 'dayone-cli'),
+                 (Join-Path $HOME '.config\dayone-cli')) | Select-Object -Unique
+    $hasCli = $dayoneExe -or ($cliDirs | Where-Object { Test-Path $_ })
+    if ($hasCli) {
+        Step person 'Day One CLI'
+        if (-not $Everything -and -not $Yes) {
+            Info 'Your journals stay safe in your Day One account either way.'
+            $Everything = AskNo 'Also sign out and remove the Day One CLI and its downloaded copy of your journals?'
+        }
+        if ($Everything) {
+            if ($dayoneExe) {
+                Invoke-Native -Quiet { & $dayoneExe sync-schedule disable } | Out-Null
+                if ((Invoke-Native -Quiet { & $dayoneExe auth logout }) -ne 0) { Invoke-Native -Quiet { & $dayoneExe auth logout --force } | Out-Null }
+                Ok 'Signed out of Day One'
+            }
+            if (Get-Command npm -ErrorAction SilentlyContinue) {
+                if ((Invoke-Native { npm uninstall -g '@dayone/cli' }) -eq 0) { Ok 'Removed the Day One CLI' }
+            }
+            foreach ($d in $cliDirs) { if (Test-Path $d) { Remove-Item $d -Recurse -Force -ErrorAction SilentlyContinue } }
+            Ok 'Removed its settings and downloaded journals'
+        } else {
+            Info 'Kept the Day One CLI and your sign-in.'
+        }
+    }
+
+    Write-Host ''
+    if ($Fancy) { Write-Host "$($Icon.ok) Uninstalled." -ForegroundColor Green } else { Write-Host '  Uninstalled.' -ForegroundColor Green }
+    $arrow = if ($Fancy) { "   $($Icon.arrow)" } else { '    -' }
+    Write-Host "$arrow Restart Claude Desktop and Claude Code to finish."
+    Write-Host "$arrow To start again: irm https://raw.githubusercontent.com/$Repo/main/install.ps1 | iex"
     Write-Host ''
     return
 }

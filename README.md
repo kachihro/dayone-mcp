@@ -320,22 +320,35 @@ These tools are available to the AI:
 
 | You installed with | Update | Uninstall |
 |---|---|---|
-| The installer | Run it again (this updates Claude Desktop's server, and Claude Code's plugin too). To only re-sync or change account, run [configure](#later-sign-in-add-your-key-or-switch-account). | See below |
+| The installer | Run it again (this updates Claude Desktop's server, and Claude Code's plugin too). To only re-sync or change account, run [configure](#later-sign-in-add-your-key-or-switch-account). | [Uninstall](#uninstall) |
 | The Claude Code plugin | `claude plugin update dayone@dayone-mcp`, or `/plugin` in Claude Code | `claude plugin uninstall dayone@dayone-mcp`, or `/plugin` in Claude Code |
 | A manual download | Quit your AI app, then replace the file with the new release | Delete the file and remove the entry from your app's config |
 
-To remove everything the installer set up:
+### Uninstall
 
-- **Windows** (PowerShell):
-  ```powershell
-  & ([scriptblock]::Create((irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.ps1))) -Uninstall
-  ```
-- **macOS / Linux:**
-  ```bash
-  curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.sh | bash -s -- --uninstall
-  ```
+**Windows** (PowerShell):
 
-The Day One CLI stays installed. Remove it with `npm uninstall -g @dayone/cli`.
+```powershell
+irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/uninstall.ps1 | iex
+```
+
+It removes the server, the Claude Code plugin and the Claude Desktop connection. Then it asks
+whether to also **sign out and remove the Day One CLI** and its downloaded copy of your journals.
+Your journals always stay safe in your Day One account.
+
+**macOS / Linux:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.sh | bash -s -- --uninstall
+```
+
+(This keeps the Day One CLI. Remove it with `npm uninstall -g @dayone/cli`.)
+
+### 🔄 Start again from scratch (Windows)
+
+1. Run **uninstall** (above) and answer **y** to remove the Day One CLI too.
+2. Restart Claude Desktop and Claude Code.
+3. Run the **install** line from [Quick start](#quick-start).
 
 ---
 
