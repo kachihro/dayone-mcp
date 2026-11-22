@@ -491,5 +491,5 @@ case "$REGISTERED" in *code*) done_line "Claude Code: start a new session and tr
 [ -z "$JOURNALS_LINE" ] && done_line "Later: sign in or add your key with configure.sh (see the README)"
 if [ "$OS" = "Darwin" ]; then info "Tip: Day One for Mac also has its own MCP server (Settings > Labs)."; fi
 echo
-if [ "$FANCY" = 1 ]; then printf '   %s \033[90mEnjoying it? Buy me a coffee: %s\033[0m\n' "$(icon heart)" "$(link https://ko-fi.com/kachihro)"; fi
+if [ "$FANCY" = 1 ]; then printf '   %s \033[90mEnjoying it? Buy me a coffee (or a beer!): %s\033[0m\n' "$(icon heart)" "$(link https://ko-fi.com/kachihro)"; fi
 echo

@@ -14,7 +14,7 @@ Easier, friendlier installers. The MCP server itself is unchanged.
 - Live sync progress on both platforms: a spinner with the journal number and entry count, then
   "Synced 1,480 entries".
 - README: new "Using it in Claude Code" section.
-- The closing "Buy me a coffee" line uses 💜 and a clickable link (OSC 8 terminal hyperlink, with the
+- The closing "Buy me a coffee (or a beer!)" line uses 💜 and a clickable link (OSC 8 terminal hyperlink, with the
   full https:// address as text so other terminals can still detect it).
 
 ### Windows installer

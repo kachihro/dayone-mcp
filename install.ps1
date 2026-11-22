@@ -526,5 +526,5 @@ if ($registered -contains 'Claude Desktop') { Write-Host "$arrow Claude Desktop:
 if ($registered -contains 'Claude Code')    { Write-Host "$arrow Claude Code: start a new session and try /dayone:on-this-day" }
 if ($journals -eq 0) { Write-Host "$arrow Later: sign in or add your key with configure.ps1 (see the README)" }
 Write-Host ''
-if ($Fancy) { Write-Host "   $($Icon.heart) Enjoying it? Buy me a coffee: $(Link 'https://ko-fi.com/kachihro')" -ForegroundColor DarkGray }
+if ($Fancy) { Write-Host "   $($Icon.heart) Enjoying it? Buy me a coffee (or a beer!): $(Link 'https://ko-fi.com/kachihro')" -ForegroundColor DarkGray }
 Write-Host ''
