@@ -52,7 +52,7 @@ function U([int[]] $CodePoints) { -join ($CodePoints | ForEach-Object { [char]::
 $Icon = @{
     book = U 0x1F4D4; node = U 0x1F4E6; key = U 0x1F510; rocket = U 0x1F680; bolt = U 0x26A1, 0xFE0F
     desktop = U 0x1F4BB; ok = U 0x2705; warn = U 0x2757; party = U 0x1F389; coffee = U 0x2615, 0xFE0F
-    broom = U 0x1F9F9; heart = U 0x1F49C; arrow = U 0x1F449
+    broom = U 0x1F9F9; heart = U 0x1F49C; arrow = U 0x1F449; keyhole = U 0x1F511
 }
 
 function Step($icon, $t) { Write-Host ''; if ($Fancy) { Write-Host "$($Icon[$icon]) $t" -ForegroundColor Cyan } else { Write-Host "==> $t" -ForegroundColor Cyan } }
@@ -159,17 +159,47 @@ function Connect-DayOne([string] $DayOneExe) {
             if ($user.display_name) { $who += " as $($user.display_name)" }
             if ($user.feature_bundle.bundle_name) { $who += " ($((Get-Culture).TextInfo.ToTitleCase($user.feature_bundle.bundle_name)))" }
             Ok $who
-            # Only ask for the encryption key if this account uses end-to-end encryption.
-            if (-not $user -or $user.key) {
-                $key = Read-Host '    Encryption key (D1-..., or press Enter to skip)' -AsSecureString
-            } else { $key = New-Object System.Security.SecureString }
-            if ($key.Length -gt 0) {
-                if ((Send-Secret $key $DayOneExe @('auth', 'key-set', '--key-stdin')) -eq 0) { Ok 'Encryption key saved' }
-                else { Warn 'That key was not accepted. Add it later with: dayone auth key-set' }
-            }
             return $true
         }
         Warn 'Wrong email or password. (Sign in with Google or Apple? Set a password first at dayone.me.)'
+    }
+    return $false
+}
+
+# True if the Day One CLI already has a signed-in session.
+function Test-DayOneSignedIn([string] $DayOneExe) {
+    return ((Invoke-Native -Quiet { & $DayOneExe auth whoami }) -eq 0)
+}
+
+# Syncs journals. Returns 'ok', 'needs-key' (encrypted entries it couldn't unlock) or 'failed'.
+function Sync-DayOne([string] $DayOneExe) {
+    $code = Invoke-Native -Quiet { & $DayOneExe sync }
+    $text = $script:NativeOutput -join "`n"
+    if ($text -match 'no verified journal key') { return 'needs-key' }
+    if ($code -ne 0) { return 'failed' }
+    return 'ok'
+}
+
+# Asks for the encryption key (secure prompt) until the entries unlock, or the person skips.
+function Unlock-DayOne([string] $DayOneExe) {
+    Warn 'Your journals are end-to-end encrypted, so they need your encryption key.'
+    Write-Host ''
+    if ($Fancy) { Write-Host "    $($Icon.keyhole) Get your key:" -ForegroundColor Cyan } else { Write-Host '    Get your key:' -ForegroundColor Cyan }
+    Info '  1. Open Day One on your phone, the Windows app or dayone.me'
+    Info '  2. Go to:  iPhone / Android: profile picture > Sync > Encryption Key'
+    Info '             Windows / dayone.me: Settings > Account > Encryption Key'
+    Info '  3. Copy the key (it starts with D1-) and paste it below'
+    Write-Host ''
+    for ($try = 1; $try -le 3; $try++) {
+        $key = Read-Host '    Encryption key (D1-..., or press Enter to skip)' -AsSecureString
+        if ($key.Length -eq 0) { Info 'Skipped. Run this installer again any time to add it.'; return $false }
+        if ((Send-Secret $key $DayOneExe @('auth', 'key-set', '--key-stdin')) -ne 0) {
+            Warn "That doesn't look like a Day One encryption key (it starts with D1-)."
+            continue
+        }
+        Info 'Unlocking your entries...'
+        if ((Sync-DayOne $DayOneExe) -ne 'needs-key') { Ok 'Encryption key saved, entries unlocked'; return $true }
+        Warn "That key didn't unlock your entries. Check it and try again."
     }
     return $false
 }
@@ -257,19 +287,27 @@ if (-not $dayoneExe) {
 }
 Ok 'Day One CLI'
 
-# ---------------------------------------------------------------------------------------------- 2. Sign in
-$journals = Get-JournalCount $dayoneExe
-# Signing in needs a person at the keyboard, so skip it when running unattended (-Yes).
-if ($journals -eq 0 -and -not $Yes) {
+# ---------------------------------------------------------------------------------------------- 2. Sign in, sync, unlock
+# Signing in and the encryption key need a person at the keyboard, so skip those prompts with -Yes.
+$signedIn = Test-DayOneSignedIn $dayoneExe
+if (-not $signedIn -and -not $Yes) {
     Step key 'Sign in to Day One'
-    if (Connect-DayOne $dayoneExe) {
-        Info 'Downloading your journals...'
-        Invoke-Native -Quiet { & $dayoneExe sync } | Out-Null
-        $journals = Get-JournalCount $dayoneExe
+    $signedIn = Connect-DayOne $dayoneExe
+}
+if ($signedIn) {
+    if ($Fancy) { Step book 'Your journals' } else { Step book 'Syncing your journals' }
+    Info 'Syncing (the first time can take a few minutes)...'
+    $sync = Sync-DayOne $dayoneExe
+    if ($sync -eq 'needs-key') {
+        if ($Yes -or -not (Unlock-DayOne $dayoneExe)) { Warn 'Encrypted entries stay locked until you add your key (run this installer again).' }
+    } elseif ($sync -eq 'failed') {
+        Warn "Sync didn't finish. Check your internet connection, then run: dayone sync"
     }
 }
+$journals = Get-JournalCount $dayoneExe
 if ($journals -gt 0) { Ok (Format-Journals (Get-Journals $dayoneExe)) }
-else { Warn 'No journals yet. Run this installer again to sign in.' }
+elseif (-not $signedIn) { Warn 'Not signed in to Day One yet. Run this installer again to sign in.' }
+else { Warn 'No journals found in your Day One account yet.' }
 
 # ---------------------------------------------------------------------------------------------- 3. dayone-mcp
 Step rocket 'Installing Day One MCP'
