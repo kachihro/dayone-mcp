@@ -34,6 +34,68 @@ It's **read-only** (it can't change or delete anything) and runs **on your own c
 
 ---
 
+## 📋 Commands at a glance
+
+New here? Start with [Quick start](#quick-start). Come back to this section any time you need a command.
+
+### 🪟 Windows (PowerShell)
+
+**Install, or update to the latest version**
+```powershell
+irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.ps1 | iex
+```
+
+**Sign in, add your encryption key, switch account, or re-sync**
+```powershell
+irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/configure.ps1 | iex
+```
+
+**Uninstall** (then asks whether to also remove the Day One CLI, for a fresh start)
+```powershell
+irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/uninstall.ps1 | iex
+```
+
+### 🍎 Mac and 🐧 Linux (Terminal)
+
+**Install, or update to the latest version**
+```bash
+curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.sh | bash
+```
+
+**Sign in, add your encryption key, switch account, or re-sync**
+```bash
+curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/configure.sh | bash
+```
+
+**Uninstall** (then asks whether to also remove the Day One CLI, for a fresh start)
+```bash
+curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/uninstall.sh | bash
+```
+
+### ⚡ In Claude Code
+
+| Type this | What it does |
+|---|---|
+| `/dayone:on-this-day` | Your entries from today in past years. Add a date: `/dayone:on-this-day Christmas` |
+| `/dayone:search <topic>` | Searches your journal and summarises it, e.g. `/dayone:search trips to Japan` |
+| `/dayone:reflect <period>` | Highlights, themes and mood, e.g. `/dayone:reflect last month` |
+| `/dayone:setup` | Checks everything is working and tells you what to fix |
+| `/mcp` | Shows connected servers. Look for `plugin:dayone:dayone` |
+| `/plugin` | Manage plugins: update or remove the Day One plugin |
+
+Or just ask in plain English: *"What did I write on this day in previous years?"*
+
+### 📔 Day One CLI (optional extras, in PowerShell or Terminal)
+
+| Command | What it does |
+|---|---|
+| `dayone sync` | Download your latest entries now |
+| `dayone sync-schedule enable --interval-minutes 30` | Keep your entries up to date automatically |
+| `dayone list journals` | List your journals |
+| `dayone doctor` | Check the Day One CLI's setup (safe to share: no journal text) |
+
+---
+
 ## Quick start
 
 <p align="center"><img src="docs/images/steps.png" alt="Get started in 3 steps: 1. Install Claude Desktop or Claude Code. 2. Paste one line into PowerShell or Terminal. 3. Restart Claude and ask about your journal." width="100%"></p>
