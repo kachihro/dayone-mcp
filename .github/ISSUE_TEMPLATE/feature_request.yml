@@ -1,0 +1,16 @@
+name: Idea or feature request
+description: Suggest something that would make it better
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like?
+      description: What you'd like to be able to do, and why it would help you.
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Example
+      description: Something you'd like to ask the AI about your journal, if that helps explain it.

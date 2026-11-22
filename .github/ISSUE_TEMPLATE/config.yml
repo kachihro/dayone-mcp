@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Day One app or account help
+    url: https://dayoneapp.com/guides/
+    about: Questions about the Day One app itself go to Day One's help guides (this project isn't run by Day One).

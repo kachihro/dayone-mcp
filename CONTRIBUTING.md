@@ -4,10 +4,12 @@ Thanks for helping! 💛 Bug reports, ideas and pull requests are all welcome.
 
 ## Reporting a bug
 
-Please include:
+Please [open an issue](https://github.com/kachihro/dayone-mcp/issues/new/choose) and fill in the form. It asks for:
 
-- your OS, and how you use it (Claude Code or Claude Desktop)
-- the output of `DayOneMcp --version` and `DayOneMcp --check`
+- your OS, and how you use it (Claude Code plugin, Claude Desktop, VS Code, ...)
+- the output of `DayOneMcp --version` and `DayOneMcp --check` (Claude Code plugin users: the output of `/dayone:setup`).
+  If you used the installer, the server is at `%LOCALAPPDATA%\Programs\dayone-mcp\DayOneMcp.exe` (Windows)
+  or `~/.local/share/dayone-mcp/DayOneMcp` (Mac/Linux)
 - `dayone --version`
 - what you asked and what went wrong
 

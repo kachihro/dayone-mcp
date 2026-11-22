@@ -1,0 +1,67 @@
+name: Bug report
+description: Something isn't working
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! 💛
+        **Please never paste journal text, Day One passwords, encryption keys or tokens here.** This is public.
+  - type: dropdown
+    id: app
+    attributes:
+      label: How are you using it?
+      options:
+        - Claude Code plugin
+        - Claude Code (MCP server, without the plugin)
+        - Claude Desktop
+        - VS Code / GitHub Copilot
+        - Cursor
+        - Other MCP app
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - macOS (Apple silicon)
+        - macOS (Intel)
+        - Linux
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How did you install it?
+      options:
+        - One-line installer
+        - Claude Code /plugin install
+        - Claude Desktop extension (.mcpb)
+        - Manual download
+        - Built from source
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did or asked, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: check
+    attributes:
+      label: Diagnostics
+      description: |
+        Paste the output of these (they don't include journal text):
+        - `DayOneMcp --version` and `DayOneMcp --check` (Claude Code plugin: the result of `/dayone:setup`)
+        - `dayone --version`
+      render: text
+  - type: textarea
+    id: errors
+    attributes:
+      label: Error messages or logs (optional)
+      description: Remove anything personal first.
+      render: text

@@ -233,7 +233,12 @@ if (-not $SkipClaudeCode) {
         # older "claude mcp add" registration, so remove that first to avoid duplicate tools.
         Invoke-Native -Quiet { claude mcp remove --scope user $ServerName } | Out-Null
         $code = Invoke-Native { claude plugin marketplace add $MarketplaceSource }
-        if ($code -eq 0) { $code = Invoke-Native { claude plugin install "$PluginId" } }
+        if ($code -eq 0) {
+            # Refresh the marketplace so a re-run picks up new plugin versions, then install (or update).
+            Invoke-Native -Quiet { claude plugin marketplace update $MarketplaceName } | Out-Null
+            $code = Invoke-Native { claude plugin install "$PluginId" }
+            if ($code -eq 0) { Invoke-Native { claude plugin update "$PluginId" } | Out-Null }
+        }
         if ($code -eq 0) {
             Ok 'Installed the Day One plugin for Claude Code'
             $registered += 'Claude Code'

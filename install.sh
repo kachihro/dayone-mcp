@@ -190,7 +190,11 @@ if [ "$SKIP_CODE" = 0 ]; then
     # The Claude Code plugin brings the MCP server plus /dayone:* commands. It replaces any older
     # "claude mcp add" registration, so remove that first to avoid duplicate tools.
     claude mcp remove --scope user "$SERVER_NAME" >/dev/null 2>&1 || true
-    if claude plugin marketplace add "$MARKETPLACE_SOURCE" && claude plugin install "$PLUGIN_ID"; then
+    # Refresh the marketplace so a re-run picks up new plugin versions, then install (or update).
+    if claude plugin marketplace add "$MARKETPLACE_SOURCE" \
+       && { claude plugin marketplace update "$MARKETPLACE_NAME" >/dev/null 2>&1 || true; } \
+       && claude plugin install "$PLUGIN_ID" \
+       && claude plugin update "$PLUGIN_ID"; then
       ok "Installed the Day One plugin for Claude Code"; REGISTERED="$REGISTERED code"
     else
       warn "Couldn't install the plugin, so adding the MCP server directly instead."
