@@ -40,7 +40,9 @@ jobs:
       - name: Check installer scripts
         run: |
           bash -n install.sh
-          pwsh -NoProfile -Command '$e=$null; [System.Management.Automation.Language.Parser]::ParseFile("install.ps1",[ref]$null,[ref]$e) | Out-Null; if ($e) { $e; exit 1 } else { "install.ps1 parses OK" }'
+          pwsh -NoProfile -Command 'foreach ($f in "install.ps1","configure.ps1") { $e=$null; [System.Management.Automation.Language.Parser]::ParseFile($f,[ref]$null,[ref]$e) | Out-Null; if ($e) { $e; exit 1 } else { "$f parses OK" } }'
+          # The PowerShell scripts must stay ASCII-only (Windows PowerShell 5.1 misreads UTF-8 without a BOM).
+          if grep -nP '[^\x00-\x7F]' install.ps1 configure.ps1; then echo "Non-ASCII characters found"; exit 1; fi
 
       - name: Validate Claude Desktop extension manifest
         run: npx --yes @anthropic-ai/mcpb@2.1.2 validate packaging/mcpb/manifest.json

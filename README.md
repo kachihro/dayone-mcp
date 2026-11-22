@@ -42,8 +42,9 @@ It's **read-only** (it can't change or delete anything) and runs **on your own c
 (easiest if you're not a developer) or Claude Code. The installer connects whichever ones it finds.
 If you install another one later, just run the installer again.
 
-**2. Run the installer.** It sets up everything: Node.js, the Day One CLI, your Day One sign-in,
-this server, and the connection to Claude.
+**2. Run the installer.** It works in two parts:
+- ➕ **Part 1, adding Day One MCP:** Node.js, the Day One CLI, the server, and the connection to Claude.
+- 👤 **Part 2, setting it up for you:** your Day One sign-in, your encryption key if needed, and your journals.
 
 <details open>
 <summary><b>Windows</b></summary>
@@ -72,12 +73,11 @@ curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.sh
 <details>
 <summary>👀 See what the installer looks like</summary>
 <br>
-<img src="docs/images/installer.png" alt="Example installer output in PowerShell: it checks Node.js and the Day One CLI, finds 3 journals, installs the server, installs the Claude Code plugin, connects Claude Desktop, and says All done." width="100%">
+<img src="docs/images/installer.png" alt="Installer output in PowerShell. Part 1, Adding Day One MCP: checks Node.js and the Day One CLI, installs the server, the Claude Code plugin and Claude Desktop. Part 2, Setting it up for you: signs in, asks for the encryption key with 3 steps to find it, unlocks entries and lists 3 journals. All done." width="100%">
 </details>
 
-It signs you in to Day One (your **email** and **password**: it shows `*`, and pasting works) and
-downloads your journals. They go straight to the Day One CLI. They're never shown, saved in your
-history, or seen by the AI.
+In Part 2 you type your Day One **email** and **password** (it shows `*`, and pasting works). They
+go straight to the Day One CLI and are never shown, saved in your history, or seen by the AI.
 
 > 🔑 **Encrypted journals?** The installer spots this and asks for your encryption key. To get it:
 > 1. Open Day One on your phone, the Windows app or [dayone.me](https://dayone.me).
@@ -85,14 +85,23 @@ history, or seen by the AI.
 > 3. Copy the key (it starts with `D1-`) and paste it into the installer. It checks the key really unlocks your entries.
 
 Signed in to Day One with Google or Apple? Set a password first with **Forgot password** at
-[dayone.me](https://dayone.me). Re-running the installer is always safe, and it skips anything
-that's already done.
+[dayone.me](https://dayone.me).
 
 **3. Restart Claude.**
 - **Claude Desktop:** fully quit it (Windows: right-click its icon near the clock → **Quit**; Mac: **Cmd+Q**), then reopen it.
 - **Claude Code:** start a new session.
 
 Then ask *"What did I write on this day in previous years?"* 🎉
+
+### Later: sign in, add your key, or switch account
+
+Run **configure**. It runs just Part 2 (account, encryption key and sync) without reinstalling anything:
+
+```powershell
+irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/configure.ps1 | iex
+```
+
+<sub>On Mac or Linux, run the install line again. It's safe to re-run and skips what's already done.</sub>
 
 Prefer to set things up yourself, or using VS Code or another app? Read on.
 
@@ -311,7 +320,7 @@ These tools are available to the AI:
 
 | You installed with | Update | Uninstall |
 |---|---|---|
-| The installer | Run it again (this updates Claude Desktop's server, and Claude Code's plugin too) | See below |
+| The installer | Run it again (this updates Claude Desktop's server, and Claude Code's plugin too). To only re-sync or change account, run [configure](#later-sign-in-add-your-key-or-switch-account). | See below |
 | The Claude Code plugin | `claude plugin update dayone@dayone-mcp`, or `/plugin` in Claude Code | `claude plugin uninstall dayone@dayone-mcp`, or `/plugin` in Claude Code |
 | A manual download | Quit your AI app, then replace the file with the new release | Delete the file and remove the entry from your app's config |
 
@@ -350,9 +359,9 @@ Using Claude Code? Run **`/dayone:setup`** first. It checks each piece and tells
 |---|---|
 | Is it working at all? | Windows: `& "$env:LOCALAPPDATA\Programs\dayone-mcp\DayOneMcp.exe" --check` · Mac/Linux: `~/.local/share/dayone-mcp/DayOneMcp --check` |
 | The installer didn't connect Claude | Install Claude Desktop or Claude Code first, then run the installer again. |
-| No journals, or "run dayone sync first" | Run the [installer](#quick-start) again: it signs you in and downloads your journals. Or run `dayone sync`. |
+| No journals, or "run dayone sync first" | Run [configure](#later-sign-in-add-your-key-or-switch-account): it signs you in and downloads your journals. Or run `dayone sync`. |
 | "Email and password combination not found" | Check for typos (the installer shows `*` for each character). If you sign in to Day One with Google or Apple, set a password first with **Forgot password** at [dayone.me](https://dayone.me). |
-| Encrypted journals show nothing, or "no verified journal key" | Run the [installer](#quick-start) again. It notices, shows where to find your key, and checks the key unlocks your entries. By hand: `dayone auth key-set`, then `dayone sync`. |
+| Encrypted journals show nothing, or "no verified journal key" | Run [configure](#later-sign-in-add-your-key-or-switch-account). It notices, shows where to find your key, and checks the key unlocks your entries. By hand: `dayone auth key-set`, then `dayone sync`. |
 | "Could not find the Day One CLI" | Run the installer again. Or tell the server where it is with the `DAYONE_CLI_PATH` environment variable (see below). |
 | Claude Code: `plugin:dayone:dayone` failed in `/mcp` | The first start downloads the server, which can time out on a slow connection. Restart Claude Code. |
 | Claude Code: tools don't appear | Start a **new** session after installing. |

@@ -27,6 +27,7 @@
 param(
     [string] $Version = $env:DAYONE_MCP_VERSION,          # e.g. v1.0.0 (default: latest)
     [switch] $Uninstall = [bool]$env:DAYONE_MCP_UNINSTALL,
+    [switch] $Configure = [bool]$env:DAYONE_MCP_CONFIGURE,   # only sign in, add your key and sync (what configure.ps1 runs)
     [switch] $SkipClaudeCode = [bool]$env:DAYONE_MCP_SKIP_CLAUDE_CODE,
     [switch] $SkipClaudeDesktop = [bool]$env:DAYONE_MCP_SKIP_CLAUDE_DESKTOP,
     [switch] $Yes = [bool]$env:DAYONE_MCP_YES             # answer "yes" to every prompt
@@ -52,10 +53,10 @@ function U([int[]] $CodePoints) { -join ($CodePoints | ForEach-Object { [char]::
 $Icon = @{
     book = U 0x1F4D4; node = U 0x1F4E6; key = U 0x1F510; rocket = U 0x1F680; bolt = U 0x26A1, 0xFE0F
     desktop = U 0x1F4BB; ok = U 0x2705; warn = U 0x2757; party = U 0x1F389; coffee = U 0x2615, 0xFE0F
-    broom = U 0x1F9F9; heart = U 0x1F49C; arrow = U 0x1F449; keyhole = U 0x1F511
+    broom = U 0x1F9F9; heart = U 0x1F49C; arrow = U 0x1F449; keyhole = U 0x1F511; plus = U 0x2795; person = U 0x1F464
 }
 
-function Step($icon, $t) { Write-Host ''; if ($Fancy) { Write-Host "$($Icon[$icon]) $t" -ForegroundColor Cyan } else { Write-Host "==> $t" -ForegroundColor Cyan } }
+function Step($iconName, $t) { Write-Host ''; if ($Fancy) { Write-Host "$($Icon[$iconName]) $t" -ForegroundColor Cyan } else { Write-Host "==> $t" -ForegroundColor Cyan } }
 function Ok($t)    { if ($Fancy) { Write-Host "   $($Icon.ok) $t" -ForegroundColor Green } else { Write-Host "    [ok] $t" -ForegroundColor Green } }
 function Info($t)  { Write-Host "    $t" -ForegroundColor Gray }
 function Warn($t)  { if ($Fancy) { Write-Host "   $($Icon.warn) $t" -ForegroundColor Yellow } else { Write-Host "    [!] $t" -ForegroundColor Yellow } }
@@ -145,6 +146,14 @@ function Send-Secret([System.Security.SecureString] $Secret, [string] $Exe, [str
     finally { $text = $null; $Secret.Dispose() }
 }
 
+# "Signed in as Alex Rivers (Silver)": just the key details from the account record.
+function Format-SignedIn($User) {
+    $who = 'Signed in'
+    if ($User.display_name) { $who += " as $($User.display_name)" }
+    if ($User.feature_bundle.bundle_name) { $who += " ($((Get-Culture).TextInfo.ToTitleCase($User.feature_bundle.bundle_name)))" }
+    return $who
+}
+
 # Signs in with PowerShell's secure prompts: they show * as you type and accept pasting,
 # unlike the hidden prompt in "dayone setup". Nothing is shown on screen or saved in history.
 function Connect-DayOne([string] $DayOneExe) {
@@ -154,11 +163,7 @@ function Connect-DayOne([string] $DayOneExe) {
         $code = Send-Secret $password $DayOneExe @('auth', 'login', '--email', $email, '--password-stdin')
         if ($code -eq 0) {
             # Show just who signed in and their plan, not the whole account record.
-            $who = 'Signed in'
-            $user = (ConvertFrom-JsonOutput $script:NativeOutput).user
-            if ($user.display_name) { $who += " as $($user.display_name)" }
-            if ($user.feature_bundle.bundle_name) { $who += " ($((Get-Culture).TextInfo.ToTitleCase($user.feature_bundle.bundle_name)))" }
-            Ok $who
+            Ok (Format-SignedIn (ConvertFrom-JsonOutput $script:NativeOutput).user)
             return $true
         }
         Warn 'Wrong email or password. (Sign in with Google or Apple? Set a password first at dayone.me.)'
@@ -192,7 +197,7 @@ function Unlock-DayOne([string] $DayOneExe) {
     Write-Host ''
     for ($try = 1; $try -le 3; $try++) {
         $key = Read-Host '    Encryption key (D1-..., or press Enter to skip)' -AsSecureString
-        if ($key.Length -eq 0) { Info 'Skipped. Run this installer again any time to add it.'; return $false }
+        if ($key.Length -eq 0) { Info 'Skipped. Run configure.ps1 any time to add it.'; return $false }
         if ((Send-Secret $key $DayOneExe @('auth', 'key-set', '--key-stdin')) -ne 0) {
             Warn "That doesn't look like a Day One encryption key (it starts with D1-)."
             continue
@@ -232,6 +237,46 @@ function Format-Journals($Journals) {
     return "${label}: $shown"
 }
 
+# Part headings: "Part 1 - Adding Day One MCP" / "Part 2 - Setting it up for you".
+function Part($iconName, $title) {
+    Write-Host ''
+    if ($Fancy) { Write-Host "$($Icon[$iconName]) $title " -ForegroundColor Magenta -NoNewline; Write-Host ([string][char]0x2500 * [Math]::Max(4, 52 - $title.Length)) -ForegroundColor DarkGray }
+    else        { Write-Host "== $title ==" -ForegroundColor Magenta }
+}
+
+# Part 2: the personal bits. Your Day One account, encryption key and journals.
+function Invoke-PersonalSetup([string] $DayOneExe) {
+    # Signing in and the encryption key need a person at the keyboard, so skip those prompts with -Yes.
+    Step key 'Your Day One account'
+    $signedIn = $false
+    if ((Invoke-Native -Quiet { & $DayOneExe auth whoami }) -eq 0) {
+        $signedIn = $true
+        Ok (Format-SignedIn (ConvertFrom-JsonOutput $script:NativeOutput).user)
+        if ($Configure -and -not $Yes -and -not (Ask 'Keep using this account?')) {
+            if ((Invoke-Native -Quiet { & $DayOneExe auth logout }) -ne 0) { Invoke-Native -Quiet { & $DayOneExe auth logout --force } | Out-Null }
+            Info 'Signed out.'
+            $signedIn = $false
+        }
+    }
+    if (-not $signedIn -and -not $Yes) { $signedIn = Connect-DayOne $DayOneExe }
+
+    Step book 'Your journals'
+    if (-not $signedIn) {
+        Warn 'Not signed in yet. Run configure.ps1 any time to sign in.'
+        return 0
+    }
+    Info 'Syncing (the first time can take a few minutes)...'
+    $sync = Sync-DayOne $DayOneExe
+    if ($sync -eq 'needs-key') {
+        if ($Yes -or -not (Unlock-DayOne $DayOneExe)) { Warn 'Encrypted entries stay locked until you add your key (run configure.ps1).' }
+    } elseif ($sync -eq 'failed') {
+        Warn "Sync didn't finish. Check your internet connection, then run: dayone sync"
+    }
+    $journals = @(Get-Journals $DayOneExe)
+    if ($journals.Count -gt 0) { Ok (Format-Journals $journals) } else { Warn 'No journals found in your Day One account yet.' }
+    return $journals.Count
+}
+
 Write-Host ''
 if ($Fancy) { Write-Host "  $($Icon.book) Day One MCP  " -ForegroundColor Magenta -NoNewline; Write-Host "by kachihro $($Icon.heart)" -ForegroundColor DarkGray }
 else        { Write-Host '  Day One MCP  -  by kachihro' -ForegroundColor Magenta }
@@ -257,11 +302,35 @@ if ($Uninstall) {
     return
 }
 
+# ---------------------------------------------------------------------------------------------- configure only
+if ($Configure) {
+    $dayoneExe = Find-DayOneExe
+    if (-not $dayoneExe -or -not (Get-Command node -ErrorAction SilentlyContinue)) {
+        Warn 'Day One MCP is not installed yet. Run the installer first:'
+        Info "  irm https://raw.githubusercontent.com/$Repo/main/install.ps1 | iex"
+        Write-Host ''
+        return
+    }
+    Part person 'Setting it up for you'
+    $journals = Invoke-PersonalSetup $dayoneExe
+    Write-Host ''
+    if ($journals -gt 0) {
+        if ($Fancy) { Write-Host "$($Icon.party) All set! Your journals are ready for Claude." -ForegroundColor Green } else { Write-Host '  All set! Your journals are ready for Claude.' -ForegroundColor Green }
+        $arrow = if ($Fancy) { "   $($Icon.arrow)" } else { '    -' }
+        Write-Host "$arrow Ask Claude: 'What did I write on this day in previous years?'"
+    }
+    Write-Host ''
+    return
+}
+
 if ($env:PROCESSOR_ARCHITECTURE -notin @('AMD64', 'ARM64')) {
     throw 'dayone-mcp needs 64-bit Windows.'
 }
 
-# ---------------------------------------------------------------------------------------------- 1. Node.js + Day One CLI
+# ============================================================================================== Part 1: adding it
+Part plus 'Part 1 - Adding Day One MCP'
+
+# ---------------------------------------------------------------------------------------------- Node.js + Day One CLI
 Step node 'Checking what you need'
 if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
     Warn 'Node.js is needed (the Day One CLI runs on it).'
@@ -287,30 +356,8 @@ if (-not $dayoneExe) {
 }
 Ok 'Day One CLI'
 
-# ---------------------------------------------------------------------------------------------- 2. Sign in, sync, unlock
-# Signing in and the encryption key need a person at the keyboard, so skip those prompts with -Yes.
-$signedIn = Test-DayOneSignedIn $dayoneExe
-if (-not $signedIn -and -not $Yes) {
-    Step key 'Sign in to Day One'
-    $signedIn = Connect-DayOne $dayoneExe
-}
-if ($signedIn) {
-    if ($Fancy) { Step book 'Your journals' } else { Step book 'Syncing your journals' }
-    Info 'Syncing (the first time can take a few minutes)...'
-    $sync = Sync-DayOne $dayoneExe
-    if ($sync -eq 'needs-key') {
-        if ($Yes -or -not (Unlock-DayOne $dayoneExe)) { Warn 'Encrypted entries stay locked until you add your key (run this installer again).' }
-    } elseif ($sync -eq 'failed') {
-        Warn "Sync didn't finish. Check your internet connection, then run: dayone sync"
-    }
-}
-$journals = Get-JournalCount $dayoneExe
-if ($journals -gt 0) { Ok (Format-Journals (Get-Journals $dayoneExe)) }
-elseif (-not $signedIn) { Warn 'Not signed in to Day One yet. Run this installer again to sign in.' }
-else { Warn 'No journals found in your Day One account yet.' }
-
-# ---------------------------------------------------------------------------------------------- 3. dayone-mcp
-Step rocket 'Installing Day One MCP'
+# ---------------------------------------------------------------------------------------------- dayone-mcp
+Step rocket 'Day One MCP server'
 $localExe = if ($PSScriptRoot) { Join-Path $PSScriptRoot 'DayOneMcp.exe' } else { $null }
 New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
 
@@ -337,11 +384,11 @@ Unblock-File $ExePath -ErrorAction SilentlyContinue
 [IO.File]::WriteAllText((Join-Path $InstallDir 'dayone-cli-path.txt'), $dayoneExe, (New-Object Text.UTF8Encoding $false))
 Ok "$(& $ExePath --version)"
 
-# Only mention the health check if something is actually wrong (no journals was already reported).
+# Only mention the health check if the server can't find the Day One CLI.
 $check = & $ExePath --check
 if ($LASTEXITCODE -eq 1) { Warn $check }
 
-# ---------------------------------------------------------------------------------------------- 4. Claude
+# ---------------------------------------------------------------------------------------------- Claude
 $registered = @()
 
 if (-not $SkipClaudeCode) {
@@ -383,12 +430,17 @@ if (-not $SkipClaudeDesktop) {
     }
 }
 
+# ============================================================================================== Part 2: for you
+Part person 'Part 2 - Setting it up for you'
+$journals = Invoke-PersonalSetup $dayoneExe
+
 # ---------------------------------------------------------------------------------------------- done
 Write-Host ''
 if ($Fancy) { Write-Host "$($Icon.party) All done!" -ForegroundColor Green } else { Write-Host '  All done!' -ForegroundColor Green }
 $arrow = if ($Fancy) { "   $($Icon.arrow)" } else { '    -' }
 if ($registered -contains 'Claude Desktop') { Write-Host "$arrow Claude Desktop: quit it fully (tray icon > Quit), then reopen" }
 if ($registered -contains 'Claude Code')    { Write-Host "$arrow Claude Code: start a new session and try /dayone:on-this-day" }
+if ($journals -eq 0) { Write-Host "$arrow Later: sign in or add your key with configure.ps1 (see the README)" }
 Write-Host ''
 if ($Fancy) { Write-Host "   $($Icon.coffee) Enjoying it? ko-fi.com/kachihro" -ForegroundColor DarkGray }
 Write-Host ''

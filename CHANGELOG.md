@@ -11,6 +11,8 @@ All notable changes to this project are listed here. Versions follow [semantic v
 - Only asks for the encryption key if the account uses end-to-end encryption.
 - Shorter output with emoji in Windows Terminal, PowerShell 7 and VS Code (plain text elsewhere).
 - Fixed garbled characters from Claude Code's output, and no longer tries to sync after a failed sign-in.
+- New `configure.ps1`: sign in, add your encryption key, switch account or re-sync, without reinstalling.
+- The installer now runs in two parts: "Adding Day One MCP" then "Setting it up for you".
 - Detects encrypted journals after syncing, shows 3 steps to find your key, and checks the key really
   unlocks your entries. Re-running the installer when already signed in goes straight to this check.
 
