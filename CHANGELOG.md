@@ -2,7 +2,10 @@
 
 All notable changes to this project are listed here. Versions follow [semantic versioning](https://semver.org).
 
-## Unreleased
+## [1.0.3] - 22/11/2026
+
+Works with nvm, smoother updates and Claude Desktop restarts on Windows, one fewer installer question,
+and a new, easier README.
 
 ### README and docs
 - New, shorter README: one command to install, then read-only access to query your journals. Clear
@@ -14,12 +17,6 @@ All notable changes to this project are listed here. Versions follow [semantic v
 ### Installers
 - One fewer question: the Day One CLI is installed automatically (it's required). Installing Node.js
   still asks first.
-
-## [1.0.3] - 22/11/2026
-
-Works with nvm, and smoother updates and Claude Desktop restarts on Windows.
-
-### Installers
 - Works with **nvm** (Node Version Manager): nvm keeps separate global npm packages for each Node
   version, so after `nvm use` the Day One CLI could seem to vanish. The installer now looks in every
   nvm Node version and saves the CLI's real location (not nvm's "current version" shortcut).
