@@ -15,15 +15,22 @@
 
 <h3 align="center">One command. Then read-only access to query your Day One journals with AI.</h3>
 
-<p align="center">
-  The installer checks and installs <b>Node.js</b> and the official <b>Day One CLI</b> for you, signs you in,<br>
-  and connects <b>Claude Code</b> and <b>Claude Desktop</b>. Free and open source, from
-  <a href="https://www.kachihro.com"><b>kachihro</b></a>.
-</p>
+**The one command:**
 
-> 🔒 **Read-only, by design.** Day One MCP can **search and read** your journal, but it can't create,
+- 📦 Installs **Node.js**, if needed
+- 📦 Installs the official **Day One CLI**, if needed
+- 🔐 Signs you in with your Day One **email**, **password** and **encryption key** (if your journals are encrypted)
+- 🚀 Connects **Claude Code** and **Claude Desktop**, then you just ask
+
+Free and open source, from [**kachihro**](https://www.kachihro.com).
+
+> 🔒 **Currently read-only.** Day One MCP can **search and read** your journal, but it can't create,
 > change or delete anything. Your journal stays exactly as you wrote it, and everything runs **on your
 > own computer**.
+>
+> ✍️ **Would you like Claude to add entries to your journal?** It's possible with the Day One CLI, and I'll
+> add it as an option if people want it. [Let me know here](https://github.com/kachihro/dayone-mcp/issues/new?title=Add+to+journal+please&body=I%27d+like+Claude+to+be+able+to+add+entries.)
+> or give the issue a 👍.
 
 ---
 
@@ -179,6 +186,10 @@ curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/uninstall.
 Yes. Day One MCP only has tools to **search, list and read** entries, plus one to download your latest
 entries from Day One. There are no tools to create, edit or delete anything, so the AI can't change your
 journal even if asked to.
+
+Adding entries could come later as an **opt-in** choice in the installer (off unless you say yes), if
+people want it. [Let me know](https://github.com/kachihro/dayone-mcp/issues/new?title=Add+to+journal+please&body=I%27d+like+Claude+to+be+able+to+add+entries.)
+if you would.
 
 </details>
 
