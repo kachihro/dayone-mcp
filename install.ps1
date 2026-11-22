@@ -183,10 +183,40 @@ function Test-DayOneSignedIn([string] $DayOneExe) {
 }
 
 # Syncs journals. Returns 'ok', 'needs-key' (encrypted entries it couldn't unlock) or 'failed'.
+# Shows a live status line while syncing, by reading the Day One CLI's progress lines as they arrive:
+#   "[sync] resource start kind=entries key=entries:<journal>"  -> next journal
+#   "[sync] resource page key=entries:<journal> items=<n> ..."  -> n more entries
+#   "[sync] resource done kind=entries ... changed_count=<n>"   -> fallback entry count
+# Sets $script:SyncedEntries. Returns 'ok', 'needs-key' (encrypted entries it couldn't unlock) or 'failed'.
 function Sync-DayOne([string] $DayOneExe) {
-    $code = Invoke-Native -Quiet { & $DayOneExe sync }
-    $text = $script:NativeOutput -join "`n"
-    if ($text -match 'no verified journal key') { return 'needs-key' }
+    $frames = if ($Fancy) { @(0x280B, 0x2819, 0x2839, 0x2838, 0x283C, 0x2834, 0x2826, 0x2827, 0x2807, 0x280F) | ForEach-Object { [string][char]$_ } }
+              else { @('|', '/', '-', '\') }
+    $dot = if ($Fancy) { [string][char]0x00B7 } else { '-' }
+    $lines = New-Object System.Collections.Generic.List[string]
+    $state = @{ journal = 0; pages = 0; done = 0; tick = 0 }
+    $oldPref = $ErrorActionPreference; $oldEnc = [Console]::OutputEncoding
+    $ErrorActionPreference = 'Continue'
+    try {
+        [Console]::OutputEncoding = New-Object Text.UTF8Encoding $false
+        & $DayOneExe sync 2>&1 | ForEach-Object {
+            $l = "$_"; $lines.Add($l)
+            if ($l -match 'resource start kind=entries') { $state.journal++ }
+            elseif ($l -match 'resource page key=entries:\S+ items=(\d+)') { $state.pages += [int]$Matches[1] }
+            elseif ($l -match 'resource done kind=entries .*changed_count=(\d+)') { $state.done += [int]$Matches[1] }
+            $state.tick++
+            $count = [Math]::Max($state.pages, $state.done)
+            $text = if ($state.journal -gt 0) { "Syncing journal $($state.journal)  $dot  {0:N0} entries" -f $count } else { 'Syncing your account...' }
+            Write-Host -NoNewline ("`r    $($frames[$state.tick % $frames.Count]) $text".PadRight(72)) -ForegroundColor Cyan
+        }
+        $code = $LASTEXITCODE
+    } finally {
+        [Console]::OutputEncoding = $oldEnc
+        $ErrorActionPreference = $oldPref
+        Write-Host -NoNewline ("`r" + (' ' * 74) + "`r")   # clear the status line
+    }
+    $script:NativeOutput = $lines
+    $script:SyncedEntries = [Math]::Max($state.pages, $state.done)
+    if (($lines -join "`n") -match 'no verified journal key') { return 'needs-key' }
     if ($code -ne 0) { return 'failed' }
     return 'ok'
 }
@@ -208,8 +238,8 @@ function Unlock-DayOne([string] $DayOneExe) {
             Warn "That doesn't look like a Day One encryption key (it starts with D1-)."
             continue
         }
-        Info 'Unlocking your entries...'
-        if ((Sync-DayOne $DayOneExe) -ne 'needs-key') { Ok 'Encryption key saved, entries unlocked'; return $true }
+        Info 'Unlocking your entries'
+        if ((Sync-DayOne $DayOneExe) -ne 'needs-key') { Ok ('Encryption key saved, {0:N0} entries unlocked' -f $script:SyncedEntries); return $true }
         Warn "That key didn't unlock your entries. Check it and try again."
     }
     return $false
@@ -271,8 +301,11 @@ function Invoke-PersonalSetup([string] $DayOneExe) {
         Warn 'Not signed in yet. Run configure.ps1 any time to sign in.'
         return 0
     }
-    Info 'Syncing (the first time can take a few minutes)...'
+    Info 'Syncing (the first time can take a few minutes)'
     $sync = Sync-DayOne $DayOneExe
+    if ($sync -eq 'ok') {
+        if ($script:SyncedEntries -gt 0) { Ok ('Synced {0:N0} entries' -f $script:SyncedEntries) } else { Ok 'Up to date' }
+    }
     if ($sync -eq 'needs-key') {
         if ($Yes -or -not (Unlock-DayOne $DayOneExe)) { Warn 'Encrypted entries stay locked until you add your key (run configure.ps1).' }
     } elseif ($sync -eq 'failed') {

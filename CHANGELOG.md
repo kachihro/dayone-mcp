@@ -4,6 +4,15 @@ All notable changes to this project are listed here. Versions follow [semantic v
 
 ## Unreleased
 
+### Installers
+- macOS/Linux installer brought up to date with Windows: two parts, `configure.sh` and
+  `uninstall.sh`, a password prompt that shows `*` and accepts pasting, encrypted-journal detection
+  with the Mac key steps, a full-reset uninstall and emoji output (plain text in non-UTF-8 terminals).
+  Works with the bash 3.2 that macOS uses for `curl | bash`.
+- Live sync progress on both platforms: a spinner with the journal number and entry count, then
+  "Synced 1,480 entries".
+- README: new "Using it in Claude Code" section.
+
 ### Windows installer
 - Easier Day One sign-in: the password and encryption key prompts show `*` and accept pasting, and
   are passed to the Day One CLI without appearing on screen or in history.

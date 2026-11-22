@@ -97,11 +97,59 @@ Then ask *"What did I write on this day in previous years?"* 🎉
 
 Run **configure**. It runs just Part 2 (account, encryption key and sync) without reinstalling anything:
 
+**Windows** (PowerShell):
+
 ```powershell
 irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/configure.ps1 | iex
 ```
 
-<sub>On Mac or Linux, run the install line again. It's safe to re-run and skips what's already done.</sub>
+**macOS / Linux** (Terminal):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/configure.sh | bash
+```
+
+---
+
+## 💬 Using it in Claude Code
+
+The installer adds the **Day One plugin** to Claude Code for all your projects, so you can use it in
+any folder.
+
+**1. Check it's connected.** Start a new Claude Code session and run:
+
+```
+/dayone:setup
+```
+
+It checks the Day One CLI, your sign-in and the server, and tells you exactly what to fix if
+anything's wrong. (You can also run `/mcp` and look for `plugin:dayone:dayone` ✔ connected.)
+
+**2. Use the commands.** Type `/dayone` to see them:
+
+| Command | Try | What you get |
+|---|---|---|
+| `/dayone:on-this-day` | `/dayone:on-this-day` or `/dayone:on-this-day Christmas` | Your entries from this day in past years, with how many years ago |
+| `/dayone:search` | `/dayone:search trips to Japan` | Searches several related words and summarises what it finds, with dates |
+| `/dayone:reflect` | `/dayone:reflect last month` or `/dayone:reflect 2024` | Highlights, themes and mood for that period |
+| `/dayone:setup` | `/dayone:setup` | A health check of the whole setup |
+
+**3. Or just ask in plain English.** The plugin teaches Claude how to search your journal well:
+
+> *What did I write on this day in previous years?*<br>
+> *When did I last mention Mum's birthday?*<br>
+> *How was I feeling in the weeks before the move?*<br>
+> *Summarise my travel journal from 2024.*
+
+The first time Claude uses a Day One tool, Claude Code asks permission. Choose **Yes, and don't ask
+again** for the Day One tools so it doesn't ask every time. They're read-only: they can't change or
+delete anything in your journal.
+
+> 💡 Entries you've just written? Ask Claude to *"sync my journal"* first, or turn on automatic
+> syncing: `dayone sync-schedule enable --interval-minutes 30`.
+
+Using **Claude Desktop** instead? After installing, fully quit and reopen it, then ask the same
+questions in a new chat. **dayone** should be listed in the tools menu of the message box.
 
 Prefer to set things up yourself, or using VS Code or another app? Read on.
 
@@ -153,14 +201,7 @@ The installer does this for you. Everything else in this guide needs it.
 
 The first time it starts, the plugin downloads its server (about 40 MB) and verifies the download.
 
-| Command | What it does |
-|---|---|
-| `/dayone:on-this-day [date]` | Your memories from today (or any date) in past years |
-| `/dayone:search <topic>` | Searches with several related words and summarises what it finds |
-| `/dayone:reflect [period]` | Highlights, themes and mood, e.g. `/dayone:reflect last month` |
-| `/dayone:setup` | Checks each piece and tells you what to fix |
-
-You can also just ask in plain English. The plugin teaches Claude how to search a journal well.
+See [Using it in Claude Code](#-using-it-in-claude-code) for the commands and examples.
 
 ---
 
@@ -336,15 +377,13 @@ It removes the server, the Claude Code plugin and the Claude Desktop connection.
 whether to also **sign out and remove the Day One CLI** and its downloaded copy of your journals.
 Your journals always stay safe in your Day One account.
 
-**macOS / Linux:**
+**macOS / Linux** (Terminal):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.sh | bash -s -- --uninstall
+curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/uninstall.sh | bash
 ```
 
-(This keeps the Day One CLI. Remove it with `npm uninstall -g @dayone/cli`.)
-
-### 🔄 Start again from scratch (Windows)
+### 🔄 Start again from scratch
 
 1. Run **uninstall** (above) and answer **y** to remove the Day One CLI too.
 2. Restart Claude Desktop and Claude Code.
