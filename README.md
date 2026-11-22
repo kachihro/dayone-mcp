@@ -480,7 +480,7 @@ Using Claude Code? Run **`/dayone:setup`** first. It checks each piece and tells
 | No journals, or "run dayone sync first" | Run [configure](#later-sign-in-add-your-key-or-switch-account): it signs you in and downloads your journals. Or run `dayone sync`. |
 | "Email and password combination not found" | Check for typos (the installer shows `*` for each character). If you sign in to Day One with Google or Apple, set a password first with **Forgot password** at [dayone.me](https://dayone.me). |
 | Encrypted journals show nothing, or "no verified journal key" | Run [configure](#later-sign-in-add-your-key-or-switch-account). It notices, shows where to find your key, and checks the key unlocks your entries. By hand: `dayone auth key-set`, then `dayone sync`. |
-| "Could not find the Day One CLI" | Run the installer again. Or tell the server where it is with the `DAYONE_CLI_PATH` environment variable (see below). |
+| "Can't find the Day One CLI" | Re-run the installer. It finds the CLI (including in any Node version managed by **nvm**) or installs it, and reconnects it. Or tell the server where it is with the `DAYONE_CLI_PATH` environment variable (see below). |
 | Claude Code: `plugin:dayone:dayone` failed in `/mcp` | The first start downloads the server, which can time out on a slow connection. Restart Claude Code. |
 | Claude Code: tools don't appear | Start a **new** session after installing. |
 | Claude Desktop: **dayone** isn't in Settings → Plugins | Run the installer again and let it close Claude Desktop. If Claude Desktop is open while the setting is saved, it can undo the change when it quits. Logs: `%APPDATA%\Claude\logs` (Windows), `~/Library/Logs/Claude` (Mac). |

@@ -496,7 +496,10 @@ tar -xzf "$TMP/dayone-mcp.tar.gz" -C "$TMP"
 mkdir -p "$INSTALL_DIR"
 install -m 755 "$TMP/DayOneMcp" "$EXE"
 if [ "$OS" = "Darwin" ]; then xattr -d com.apple.quarantine "$EXE" 2>/dev/null || true; fi
-printf '%s' "$DAYONE" > "$INSTALL_DIR/dayone-cli-path.txt"
+# Save the real location (following any folder symlinks, e.g. a Node version manager's "current" link).
+DAYONE_REAL="$(cd -P "$(dirname "$DAYONE")" 2>/dev/null && pwd -P)/$(basename "$DAYONE")"
+[ -x "$DAYONE_REAL" ] || DAYONE_REAL="$DAYONE"
+printf '%s' "$DAYONE_REAL" > "$INSTALL_DIR/dayone-cli-path.txt"
 ok "$("$EXE" --version)"
 # Only mention the health check if the server can't find the Day One CLI.
 CHECK_RC=0; CHECK="$("$EXE" --check 2>&1)" || CHECK_RC=$?

@@ -127,8 +127,38 @@ public sealed class DayOneCli(ILogger<DayOneCli> logger)
 
         return FindCandidates().FirstOrDefault(File.Exists)
             ?? throw new McpException(
-                "Could not find the Day One CLI. Install it with 'npm install -g @dayone/cli', " +
-                "or set the DAYONE_CLI_PATH environment variable to the full path of the dayone executable.");
+                "Can't find the Day One CLI. Please re-run the Day One MCP installer: https://github.com/kachihro/dayone-mcp");
+    }
+
+    /// <summary>
+    /// Node.js installs managed by nvm keep a separate set of global npm packages for each Node version,
+    /// so the Day One CLI may live under a version that isn't the active one. Its native binary doesn't
+    /// need Node to run, so any copy works. Yields npm prefix folders, newest Node version first.
+    /// </summary>
+    private static IEnumerable<string> NvmPrefixes(string home)
+    {
+        var roots = new List<string>();
+        if (OperatingSystem.IsWindows())
+        {
+            roots.Add(Environment.GetEnvironmentVariable("NVM_HOME") ?? "");
+            roots.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "nvm"));
+            roots.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "nvm"));
+            roots.Add(@"C:\nvm4w");
+        }
+        else
+        {
+            var nvmDir = Environment.GetEnvironmentVariable("NVM_DIR");
+            roots.Add(Path.Combine(string.IsNullOrEmpty(nvmDir) ? Path.Combine(home, ".nvm") : nvmDir, "versions", "node"));
+        }
+
+        foreach (var root in roots.Where(r => !string.IsNullOrWhiteSpace(r)).Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            string[] versions;
+            try { versions = Directory.Exists(root) ? Directory.GetDirectories(root, "v*") : []; }
+            catch { continue; }
+            foreach (var dir in versions.OrderByDescending(d => Version.TryParse(Path.GetFileName(d).TrimStart('v'), out var v) ? v : new Version(0, 0)))
+                yield return OperatingSystem.IsWindows() ? dir : Path.Combine(dir, "lib");
+        }
     }
 
     private static IEnumerable<string> FindCandidates()
@@ -149,6 +179,7 @@ public sealed class DayOneCli(ILogger<DayOneCli> logger)
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "npm"),
             };
             prefixes.AddRange(pathDirs);
+            prefixes.AddRange(NvmPrefixes(home));
 
             foreach (var prefix in prefixes)
             {
@@ -169,6 +200,15 @@ public sealed class DayOneCli(ILogger<DayOneCli> logger)
             // GUI apps (e.g. Claude Desktop on macOS) often start with a minimal PATH, so also check
             // the usual npm / Homebrew / user bin folders. On these platforms the npm "dayone" is a
             // Node launcher, which needs 'node' on PATH; set DAYONE_CLI_PATH if it can't find it.
+            var platform = OperatingSystem.IsMacOS() ? "darwin" : "linux";
+            var arch = System.Runtime.InteropServices.RuntimeInformation.OSArchitecture == System.Runtime.InteropServices.Architecture.Arm64 ? "arm64" : "x64";
+            foreach (var prefix in NvmPrefixes(home))
+            {
+                var scope = Path.Combine(prefix, "node_modules", "@dayone", "cli", "node_modules", "@dayone");
+                yield return Path.Combine(scope, $"cli-{platform}-{arch}", "dayone");
+                yield return Path.Combine(scope, $"cli-{platform}-{arch}-no-embeddings", "dayone");
+            }
+
             var extra = new[]
             {
                 "/opt/homebrew/bin", "/usr/local/bin", "/usr/bin",

@@ -183,6 +183,15 @@ function Find-DayOneExe {
     $roots = @()
     try { $roots += (& npm root -g 2>$null | Select-Object -First 1) } catch { }
     $roots += (Join-Path $env:APPDATA 'npm\node_modules')
+    # nvm keeps separate global packages for each Node version, so also look in every version's folder
+    # (newest first). The Day One CLI's own program doesn't need Node, so any copy works.
+    foreach ($nvm in @($env:NVM_HOME, (Join-Path $env:LOCALAPPDATA 'nvm'), (Join-Path $env:APPDATA 'nvm'), 'C:\nvm4w') | Where-Object { $_ } | Select-Object -Unique) {
+        if (Test-Path $nvm) {
+            Get-ChildItem $nvm -Directory -Filter 'v*' -ErrorAction SilentlyContinue |
+                Sort-Object { try { [version]($_.Name.TrimStart('v')) } catch { [version]'0.0' } } -Descending |
+                ForEach-Object { $roots += (Join-Path $_.FullName 'node_modules') }
+        }
+    }
     foreach ($root in ($roots | Where-Object { $_ } | Select-Object -Unique)) {
         foreach ($rel in @('@dayone\cli\node_modules\@dayone\cli-win32-x64\dayone.exe', '@dayone\cli-win32-x64\dayone.exe')) {
             $p = Join-Path $root.Trim() $rel
@@ -190,6 +199,28 @@ function Find-DayOneExe {
         }
     }
     return $null
+}
+
+# The real location of a file, following any folder shortcut (symlink or junction) on the way.
+# nvm reaches the active Node version through one (e.g. C:\nvm4w\nodejs), and that changes with
+# "nvm use", so the real path is what keeps working.
+function Resolve-RealPath([string] $Path) {
+    $probe = $Path
+    while ($probe) {
+        $item = Get-Item -LiteralPath $probe -Force -ErrorAction SilentlyContinue
+        if ($item -and $item.LinkType -and $item.Target) {
+            $target = @($item.Target)[0]
+            if (-not [IO.Path]::IsPathRooted($target)) { $target = Join-Path (Split-Path $probe -Parent) $target }
+            $rest = $Path.Substring($probe.Length).TrimStart('\', '/')
+            $real = if ($rest) { Join-Path $target $rest } else { $target }
+            if (Test-Path -LiteralPath $real) { return (Resolve-RealPath $real) }
+            return $Path
+        }
+        $parent = Split-Path $probe -Parent
+        if (-not $parent -or $parent -eq $probe) { break }
+        $probe = $parent
+    }
+    return $Path
 }
 
 # Pipes a SecureString's text straight into a program's stdin, then forgets it. Returns the exit code.
@@ -527,7 +558,7 @@ if ($localExe -and (Test-Path $localExe)) {
     }
 }
 Unblock-File $ExePath -ErrorAction SilentlyContinue
-[IO.File]::WriteAllText((Join-Path $InstallDir 'dayone-cli-path.txt'), $dayoneExe, (New-Object Text.UTF8Encoding $false))
+[IO.File]::WriteAllText((Join-Path $InstallDir 'dayone-cli-path.txt'), (Resolve-RealPath $dayoneExe), (New-Object Text.UTF8Encoding $false))
 Ok "$(& $ExePath --version)"
 
 # Only mention the health check if the server can't find the Day One CLI.

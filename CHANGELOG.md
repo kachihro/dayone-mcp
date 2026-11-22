@@ -2,6 +2,19 @@
 
 All notable changes to this project are listed here. Versions follow [semantic versioning](https://semver.org).
 
+## Unreleased
+
+### Installers
+- Works with **nvm** (Node Version Manager): nvm keeps separate global npm packages for each Node
+  version, so after `nvm use` the Day One CLI could seem to vanish. The installer now looks in every
+  nvm Node version and saves the CLI's real location (not nvm's "current version" shortcut).
+
+### MCP server
+- Also searches nvm's Node version folders for the Day One CLI (Windows: `C:\nvm4w`, `%LOCALAPPDATA%\nvm`,
+  `%APPDATA%\nvm`, `NVM_HOME`; Mac/Linux: `~/.nvm`).
+- Clearer message when the CLI can't be found: "Can't find the Day One CLI. Please re-run the Day One
+  MCP installer".
+
 ## [1.0.2] - 22/11/2026
 
 A new icon and kachihro branding, and friendlier installers. Search and reading are unchanged.
