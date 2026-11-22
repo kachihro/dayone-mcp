@@ -8,7 +8,7 @@
       1. Node.js            (offers to install it with winget if missing)
       2. Day One CLI        (npm install -g @dayone/cli, then sign in and sync)
       3. dayone-mcp server  (latest GitHub release -> %LOCALAPPDATA%\Programs\dayone-mcp)
-      4. Registers it with Claude Code and Claude Desktop
+      4. Adds the Claude Code plugin and the Claude Desktop extension
 
     Safe to run again: it updates the server and skips steps that are already done.
 
@@ -42,6 +42,7 @@ $Repo       = 'kachihro/dayone-mcp'
 $ServerName = 'dayone'
 $MarketplaceName = 'dayone-mcp'
 $PluginId = 'dayone@dayone-mcp'
+$ExtensionName = 'dayone-mcp'   # the Claude Desktop extension's name in its manifest
 $MarketplaceSource = if ($env:DAYONE_MCP_MARKETPLACE) { $env:DAYONE_MCP_MARKETPLACE } else { $Repo }   # for forks and testing
 $InstallDir = Join-Path $env:LOCALAPPDATA 'Programs\dayone-mcp'
 $ExePath    = Join-Path $InstallDir 'DayOneMcp.exe'
@@ -176,6 +177,55 @@ function Update-DesktopConfig([string] $Path, [scriptblock] $Change) {
     $config['mcpServers'] = $servers
     $json = $config | ConvertTo-Json -Depth 50
     [IO.File]::WriteAllText($Path, $json, (New-Object Text.UTF8Encoding $false))
+}
+
+# Claude Desktop keeps extensions in "Claude Extensions" next to its config (regular or Microsoft Store
+# folder). Returns the installed Day One extension's version, or $null if it isn't installed.
+function Get-DesktopExtensionVersion {
+    $roots = @((Join-Path $env:APPDATA 'Claude')) + @(
+        Get-ChildItem (Join-Path $env:LOCALAPPDATA 'Packages') -Directory -Filter 'Claude_*' -ErrorAction SilentlyContinue |
+            ForEach-Object { Join-Path $_.FullName 'LocalCache\Roaming\Claude' })
+    foreach ($root in $roots) {
+        $dir = Join-Path $root 'Claude Extensions'
+        if (-not (Test-Path $dir)) { continue }
+        foreach ($ext in Get-ChildItem $dir -Directory -ErrorAction SilentlyContinue) {
+            $manifest = Join-Path $ext.FullName 'manifest.json'
+            if (-not (Test-Path $manifest)) { continue }
+            try { $m = Get-Content $manifest -Raw | ConvertFrom-Json } catch { continue }
+            if ($m.name -eq $ExtensionName) { return [string]$m.version }
+        }
+    }
+    return $null
+}
+
+# Gets the Claude Desktop extension (.mcpb) for this release and keeps it in the install folder.
+function Save-DesktopExtension {
+    $target = Join-Path $InstallDir 'dayone-mcp.mcpb'
+    $local = if ($PSScriptRoot) { Join-Path $PSScriptRoot 'dayone-mcp-win-x64.mcpb' } else { $null }
+    if ($local -and (Test-Path $local)) { Copy-Item $local $target -Force; return $target }
+    $url = if ($env:DAYONE_MCP_MCPB_URL) { $env:DAYONE_MCP_MCPB_URL }   # for forks and testing
+           elseif ($Version) { "https://github.com/$Repo/releases/download/$Version/dayone-mcp-win-x64.mcpb" }
+           else              { "https://github.com/$Repo/releases/latest/download/dayone-mcp-win-x64.mcpb" }
+    Invoke-WebRequest -Uri $url -OutFile $target -UseBasicParsing
+    Unblock-File $target -ErrorAction SilentlyContinue
+    return $target
+}
+
+# Opens the extension in Claude Desktop (which asks "Install?") and waits for it to appear.
+function Install-DesktopExtension([string] $Wanted) {
+    try { $mcpb = Save-DesktopExtension } catch { Warn "Couldn't download the Claude Desktop extension: $($_.Exception.Message)"; return $false }
+    Info 'Claude Desktop will open and ask to install Day One. Click Install.'
+    try { Start-Process $mcpb } catch { Warn "Couldn't open it in Claude Desktop."; Info "Double-click this file to install it: $mcpb"; return $false }
+    $script:ClosedDesktop = $false   # it's open again now
+    $frames = '|/-\'
+    for ($i = 0; $i -lt 360; $i++) {   # up to 3 minutes
+        if ((Get-DesktopExtensionVersion) -eq $Wanted) { Write-Host "`r$(' ' * 70)`r" -NoNewline; return $true }
+        Write-Host "`r    $($frames[$i % 4]) Waiting for you to click Install in Claude Desktop..." -NoNewline -ForegroundColor Gray
+        Start-Sleep -Milliseconds 500
+    }
+    Write-Host ''
+    Info "Didn't see it install. You can also double-click: $mcpb"
+    return $false
 }
 
 # Finds the native dayone.exe inside npm's global folder (calling it directly avoids cmd.exe quoting issues).
@@ -432,6 +482,9 @@ if ($Uninstall) {
         Ok 'Removed from Claude Desktop'
         if (-not $closed) { Warn 'Quit Claude Desktop fully (tray icon > Quit), then run uninstall again to be sure.' }
     }
+    if (Get-DesktopExtensionVersion) {
+        Info 'Also remove the extension in Claude Desktop: Settings > Plugins > Day One Journal by kachihro > Uninstall.'
+    }
     if (Test-Path $InstallDir) {
         Remove-Item $InstallDir -Recurse -Force -ErrorAction SilentlyContinue
         Ok 'Removed the server'
@@ -605,18 +658,38 @@ if (-not $SkipClaudeCode) {
     }
 }
 
+# Connects Claude Desktop through its settings file (the fallback: works the same, but without the icon).
+function Connect-DesktopConfig([string] $Cfg) {
+    $closed = Close-ClaudeDesktop 'connect Day One'
+    Update-DesktopConfig $Cfg { param($s) $s[$ServerName] = [ordered]@{ command = $ExePath; args = @() } }
+    if (-not (Test-DesktopConfig $Cfg)) { Warn "Couldn't save the Claude Desktop setting. Quit Claude Desktop and run this installer again."; return $false }
+    if (-not $closed) { $script:DesktopStillOpen = $true }
+    Ok 'Connected'
+    return $true
+}
+
 if (-not $SkipClaudeDesktop) {
     Step desktop 'Claude Desktop'
     $cfg = Get-DesktopConfigPath
     if ($cfg) {
-        $closed = Close-ClaudeDesktop 'connect Day One'
-        Update-DesktopConfig $cfg { param($s) $s[$ServerName] = [ordered]@{ command = $ExePath; args = @() } }
-        if (Test-DesktopConfig $cfg) {
-            Ok 'Connected'
+        # Claude Desktop gets Day One as an extension, so it shows with its icon.
+        $wanted = "$(& $ExePath --version)" -replace '^dayone-mcp\s+', ''
+        $have = Get-DesktopExtensionVersion
+        if ($have -eq $wanted) {
+            Ok "Extension installed ($have)"
             $registered += 'Claude Desktop'
-            if (-not $closed) { $script:DesktopStillOpen = $true }
-        } else {
-            Warn "Couldn't save the Claude Desktop setting. Quit Claude Desktop and run this installer again."
+        } elseif (Install-DesktopExtension $wanted) {
+            Ok "Extension installed ($wanted)"
+            $registered += 'Claude Desktop'
+        } elseif ($have) {
+            Ok "Extension installed ($have). Double-click the file above to update it"
+            $registered += 'Claude Desktop'
+        } elseif (AskNo 'Not showing up? Connect it the classic way instead (works the same, no icon)?') {
+            if (Connect-DesktopConfig $cfg) { $registered += 'Claude Desktop' }
+        }
+        # Early test installs used the settings file instead; point out the old entry so there is only one.
+        if ((Get-DesktopExtensionVersion) -and (Test-Path $cfg) -and (Test-DesktopConfig $cfg)) {
+            Info 'Remove the old "dayone" entry from Claude Desktop: Settings > Developer > Edit Config.'
         }
     } else {
         Info 'Not installed. Run this installer again after installing it.'

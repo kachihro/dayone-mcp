@@ -75,9 +75,10 @@ In the examples, replace `YOU` / `you` with your user name (the folder name unde
 
 ### Claude Desktop
 
-The installer does this for you, and restarts Claude Desktop so the change sticks.
+The installer does this for you. On Windows it installs the Claude Desktop extension (with the Day One icon);
+on a Mac it adds an entry to Claude Desktop's settings file.
 
-**Windows shortcut:** download `dayone-mcp-win-x64.mcpb` from the
+**Windows, by hand:** download `dayone-mcp-win-x64.mcpb` from the
 [latest release](https://github.com/kachihro/dayone-mcp/releases/latest) and double-click it to install it
 as a Claude Desktop extension. You still need the [Day One CLI](#1-set-up-the-day-one-cli).
 

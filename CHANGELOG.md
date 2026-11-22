@@ -15,6 +15,8 @@ and a new, easier README.
 - Advanced material moved to [Manual setup](docs/manual-setup.md) and [Troubleshooting](docs/troubleshooting.md).
 
 ### Installers
+- **Windows: Claude Desktop now gets Day One as an extension**, so it shows with its icon instead of as a
+  plain "Local dev" server. Just click **Install** when Claude Desktop asks; no restart needed.
 - One fewer question: the Day One CLI is installed automatically (it's required). Installing Node.js
   still asks first.
 - Works with **nvm** (Node Version Manager): nvm keeps separate global npm packages for each Node
@@ -27,6 +29,8 @@ and a new, easier README.
   it now? It reopens when this finishes."
 
 ### MCP server
+- Also reads the Day One CLI location saved by the installer when it runs from somewhere else (the
+  Claude Desktop extension or the Claude Code plugin), so nvm setups work there too.
 - Also searches nvm's Node version folders for the Day One CLI (Windows: `C:\nvm4w`, `%LOCALAPPDATA%\nvm`,
   `%APPDATA%\nvm`, `NVM_HOME`; Mac/Linux: `~/.nvm`).
 - Clearer message when the CLI can't be found: "Can't find the Day One CLI. Please re-run the Day One

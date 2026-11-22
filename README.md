@@ -39,7 +39,7 @@ Free and open source, from [**kachihro**](https://www.kachihro.com).
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: light)" srcset="docs/images/steps-light.png">
-    <img src="docs/images/steps.png" alt="Get started in 3 steps: 1. Install Claude Desktop or Claude Code. 2. Paste one line into PowerShell or Terminal: it checks and installs Node.js and the Day One CLI, then signs you in. 3. Ask away: the installer restarts Claude Desktop for you." width="100%">
+    <img src="docs/images/steps.png" alt="Get started in 3 steps: 1. Install Claude Desktop or Claude Code. 2. Paste one line into PowerShell or Terminal: it checks and installs Node.js and the Day One CLI, then signs you in. 3. Ask away: click Install when Claude Desktop asks, then start a new chat." width="100%">
   </picture>
 </p>
 
@@ -67,7 +67,7 @@ curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.sh
 | | What it does |
 |---|---|
 | 📦 **Checks what you need** | Installs the official **Day One CLI**, and offers to install **Node.js** if it's missing or too old |
-| 🚀 **Adds Day One MCP** | Downloads the server, installs the **Claude Code plugin**, and connects **Claude Desktop** (restarting it for you) |
+| 🚀 **Adds Day One MCP** | Downloads the server, installs the **Claude Code plugin**, and the **Claude Desktop extension** (just click **Install** when Claude Desktop asks) |
 | 🔐 **Signs you in** | Your Day One **email** and **password** (it shows `*`, and pasting works). They go straight to the Day One CLI and are never shown, saved, or seen by the AI |
 | 🔑 **Unlocks encrypted journals** | If your journals are end-to-end encrypted, it shows where to find your key and checks it works |
 | 📔 **Downloads your journals** | With a live progress count, then lists them |
@@ -201,7 +201,8 @@ if you would.
 - **The Day One CLI:** Day One's official command-line tool (`@dayone/cli`, installed with npm).
 - **Day One MCP:** one program in `%LOCALAPPDATA%\Programs\dayone-mcp` (Windows) or
   `~/.local/share/dayone-mcp` (Mac/Linux).
-- **Claude Code:** the Day One plugin. **Claude Desktop:** one `dayone` entry in its settings file (a backup is kept).
+- **Claude Code:** the Day One plugin. **Claude Desktop (Windows):** the Day One extension.
+  **Claude Desktop (Mac):** one `dayone` entry in its settings file (a backup is kept).
 
 Uninstall removes all of it (see [Commands at a glance](#-commands-at-a-glance)).
 

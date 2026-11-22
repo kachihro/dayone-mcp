@@ -117,10 +117,11 @@ public sealed class DayOneCli(ILogger<DayOneCli> logger)
             throw new McpException($"DAYONE_CLI_PATH is set to '{fromEnv}', but that file does not exist.");
         }
 
-        // 2. Path saved by the installer next to this executable.
-        var savedFile = Path.Combine(AppContext.BaseDirectory, "dayone-cli-path.txt");
-        if (File.Exists(savedFile))
+        // 2. Path saved by the installer: next to this executable, or in the installer's folder (for copies
+        //    that run from elsewhere, such as the Claude Desktop extension or the Claude Code plugin).
+        foreach (var savedFile in SavedPathFiles())
         {
+            if (!File.Exists(savedFile)) continue;
             var saved = File.ReadAllText(savedFile).Trim().Trim('"');
             if (File.Exists(saved)) return saved;
         }
@@ -159,6 +160,14 @@ public sealed class DayOneCli(ILogger<DayOneCli> logger)
             foreach (var dir in versions.OrderByDescending(d => Version.TryParse(Path.GetFileName(d).TrimStart('v'), out var v) ? v : new Version(0, 0)))
                 yield return OperatingSystem.IsWindows() ? dir : Path.Combine(dir, "lib");
         }
+    }
+
+    private static IEnumerable<string> SavedPathFiles()
+    {
+        yield return Path.Combine(AppContext.BaseDirectory, "dayone-cli-path.txt");
+        yield return OperatingSystem.IsWindows()
+            ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "dayone-mcp", "dayone-cli-path.txt")
+            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share", "dayone-mcp", "dayone-cli-path.txt");
     }
 
     private static IEnumerable<string> FindCandidates()
