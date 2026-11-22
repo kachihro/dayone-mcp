@@ -2,6 +2,16 @@
 
 All notable changes to this project are listed here. Versions follow [semantic versioning](https://semver.org).
 
+## Unreleased
+
+### Windows installer
+- Easier Day One sign-in: the password and encryption key prompts show `*` and accept pasting, and
+  are passed to the Day One CLI without appearing on screen or in history.
+- Shows just the key details (who signed in, plan, journal names) instead of the full account record.
+- Only asks for the encryption key if the account uses end-to-end encryption.
+- Shorter output with emoji in Windows Terminal, PowerShell 7 and VS Code (plain text elsewhere).
+- Fixed garbled characters from Claude Code's output, and no longer tries to sync after a failed sign-in.
+
 ## [1.0.0] - 22/11/2026
 
 First public release. 🎉

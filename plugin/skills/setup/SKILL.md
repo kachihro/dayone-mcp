@@ -17,14 +17,15 @@ briefly what you found at each step, and stop at the first thing that needs thei
 3. **Signed in, with journals downloaded**: run `dayone list journals`.
    - If it returns journals, go to step 4.
    - If it returns none, or an error about signing in, the user must sign in **themselves in a
-     separate terminal** (PowerShell on Windows, Terminal on Mac), because it asks for their Day One
-     password. Never ask for their password or try to sign in for them. Tell them to run:
-     ```
-     dayone setup
-     dayone sync
-     ```
-     If their journals use end-to-end encryption, they also need `dayone auth key-set`.
-     Then ask them to run `/dayone:setup` again.
+     separate terminal**, because it needs their Day One password. Never ask for their password or
+     try to sign in for them. The easiest way is to run the installer again: it skips what's done and
+     signs them in with a prompt that shows `*` and accepts pasting.
+     - Windows (PowerShell): `irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.ps1 | iex`
+     - Mac/Linux (Terminal): `curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.sh | bash`
+
+     Then ask them to run `/dayone:setup` again. If sign-in says "Email and password combination not
+     found" and they use Google or Apple to sign in to Day One, they need to set a password first
+     (Forgot password at dayone.me).
 
 4. **MCP server**: call the `list_journals` tool from the dayone plugin.
    - If it works, the setup is done. List their journals, and suggest trying `/dayone:on-this-day`,

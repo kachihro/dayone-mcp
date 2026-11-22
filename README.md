@@ -75,10 +75,14 @@ curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.sh
 <img src="docs/images/installer.png" alt="Example installer output in PowerShell: it checks Node.js and the Day One CLI, finds 3 journals, installs the server, installs the Claude Code plugin, connects Claude Desktop, and says All done." width="100%">
 </details>
 
-The installer asks a few yes/no questions. It then runs Day One's own sign-in, where you type your
-Day One email and password. The AI never sees them. If your journals use end-to-end encryption,
-also run `dayone auth key-set` afterwards with your encryption key (see [Troubleshooting](#troubleshooting)
-for where to find it).
+It then signs you in to Day One: your **email**, your **password** (shown as `*`, and pasting
+works), and your **encryption key** if your journals use end-to-end encryption
+([where to find it](#troubleshooting)). They go straight to the Day One CLI. They're never shown,
+saved in your history, or seen by the AI.
+
+Signed in to Day One with Google or Apple? Set a password first with **Forgot password** at
+[dayone.me](https://dayone.me). Re-running the installer is always safe, and it skips anything
+that's already done.
 
 **3. Restart Claude.**
 - **Claude Desktop:** fully quit it (Windows: right-click its icon near the clock → **Quit**; Mac: **Cmd+Q**), then reopen it.
@@ -104,6 +108,14 @@ The installer does this for you. Everything else in this guide needs it.
    ```
    `dayone setup` asks for your Day One email and password. `dayone sync` downloads your journals
    to your computer, and the first sync can take a few minutes.
+
+   > **Windows tip:** the password prompt in `dayone setup` shows nothing and pasting can fail.
+   > This signs in with a `*` prompt that accepts pasting:
+   > ```powershell
+   > $p = Read-Host 'Day One password' -AsSecureString
+   > [System.Net.NetworkCredential]::new('', $p).Password | dayone auth login --email you@example.com --password-stdin | Out-Null
+   > Remove-Variable p
+   > ```
 3. If your journals use **end-to-end encryption**, also run `dayone auth key-set`.
 4. Check it worked: `dayone list journals` should list your journals.
 
@@ -320,7 +332,7 @@ The Day One CLI stays installed. Remove it with `npm uninstall -g @dayone/cli`.
 
 - Runs entirely **on your computer**. This project has no servers and collects no data or analytics.
 - It turns off the Day One CLI's optional telemetry for every command it runs.
-- You type your Day One password into Day One's own sign-in. The AI never sees it.
+- Your Day One password goes straight to the Day One CLI. It's never shown or saved, and the AI never sees it.
 - **Note:** the entries the AI reads to answer a question are sent to your AI provider (for
   example Anthropic or GitHub), like anything else you share in a chat. You choose what to ask about.
 
@@ -334,7 +346,8 @@ Using Claude Code? Run **`/dayone:setup`** first. It checks each piece and tells
 |---|---|
 | Is it working at all? | Windows: `& "$env:LOCALAPPDATA\Programs\dayone-mcp\DayOneMcp.exe" --check` · Mac/Linux: `~/.local/share/dayone-mcp/DayOneMcp --check` |
 | The installer didn't connect Claude | Install Claude Desktop or Claude Code first, then run the installer again. |
-| No journals, or "run dayone sync first" | Run `dayone sync`, and run `dayone setup` first if you haven't signed in. |
+| No journals, or "run dayone sync first" | Run the [installer](#quick-start) again: it signs you in and downloads your journals. Or run `dayone sync`. |
+| "Email and password combination not found" | Check for typos (the installer shows `*` for each character). If you sign in to Day One with Google or Apple, set a password first with **Forgot password** at [dayone.me](https://dayone.me). |
 | Encrypted journals show nothing | Run `dayone auth key-set` and paste your Day One encryption key (it starts with `D1-`). To find it in the Day One app: **Windows / web:** Settings → Account → Encryption Key · **Mac:** Settings → Sync → Advanced → View Encryption Key · **iPhone / Android:** profile icon → Sync → Encryption Key. See Day One's [lost key guide](https://dayoneapp.com/guides/troubleshooting/finding-a-lost-encryption-key/). |
 | "Could not find the Day One CLI" | Run the installer again. Or tell the server where it is with the `DAYONE_CLI_PATH` environment variable (see below). |
 | Claude Code: `plugin:dayone:dayone` failed in `/mcp` | The first start downloads the server, which can time out on a slow connection. Restart Claude Code. |
