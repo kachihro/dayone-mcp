@@ -223,6 +223,19 @@ function Resolve-RealPath([string] $Path) {
     return $Path
 }
 
+# Puts a new DayOneMcp.exe in place. If the current one is running (e.g. Claude Desktop started it),
+# Windows won't let it be overwritten, but it does let it be renamed: so move it aside and copy the new
+# one in. The old copy keeps running until Claude Desktop restarts, and is cleaned up next time.
+function Install-ServerExe([string] $Source) {
+    Get-ChildItem $InstallDir -Filter 'DayOneMcp.exe.old-*' -ErrorAction SilentlyContinue |
+        Remove-Item -Force -ErrorAction SilentlyContinue
+    if (Test-Path $ExePath) {
+        try { Copy-Item $Source $ExePath -Force -ErrorAction Stop; return }
+        catch { Move-Item $ExePath "$ExePath.old-$((Get-Date).ToString('yyyyMMddHHmmss'))" -Force -ErrorAction Stop }
+    }
+    Copy-Item $Source $ExePath -Force -ErrorAction Stop
+}
+
 # Pipes a SecureString's text straight into a program's stdin, then forgets it. Returns the exit code.
 # (It must pipe into the program itself: text piped into a script block doesn't reach a program inside it.)
 function Send-Secret([System.Security.SecureString] $Secret, [string] $Exe, [string[]] $ExeArgs) {
@@ -419,10 +432,10 @@ if ($Uninstall) {
         if (-not $closed) { Warn 'Quit Claude Desktop fully (tray icon > Quit), then run uninstall again to be sure.' }
     }
     if (Test-Path $InstallDir) {
-        Get-Process DayOneMcp -ErrorAction SilentlyContinue |
-            Where-Object { $_.Path -eq $ExePath } | Stop-Process -Force -ErrorAction SilentlyContinue
-        Remove-Item $InstallDir -Recurse -Force
+        Remove-Item $InstallDir -Recurse -Force -ErrorAction SilentlyContinue
         Ok 'Removed the server'
+        # Windows can't delete a program that's still running (Claude Desktop may have started it).
+        if (Test-Path $InstallDir) { Info "One file is still in use. After restarting Claude Desktop you can delete: $InstallDir" }
     }
 
     # Optionally go back to a clean slate: sign out, remove the Day One CLI and what it downloaded.
@@ -539,7 +552,7 @@ $localExe = if ($PSScriptRoot) { Join-Path $PSScriptRoot 'DayOneMcp.exe' } else 
 New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
 
 if ($localExe -and (Test-Path $localExe)) {
-    Copy-Item $localExe $ExePath -Force
+    Install-ServerExe $localExe
 } else {
     $url = if ($env:DAYONE_MCP_URL) { $env:DAYONE_MCP_URL }   # for forks and testing
            elseif ($Version) { "https://github.com/$Repo/releases/download/$Version/dayone-mcp-win-x64.zip" }
@@ -549,10 +562,7 @@ if ($localExe -and (Test-Path $localExe)) {
     try {
         Invoke-WebRequest -Uri $url -OutFile (Join-Path $tmp 'dayone-mcp.zip') -UseBasicParsing
         Expand-Archive (Join-Path $tmp 'dayone-mcp.zip') -DestinationPath $tmp -Force
-        # Stop a running copy (e.g. Claude Desktop has it open) so the file can be replaced.
-        Get-Process DayOneMcp -ErrorAction SilentlyContinue |
-            Where-Object { $_.Path -eq $ExePath } | Stop-Process -Force -ErrorAction SilentlyContinue
-        Copy-Item (Join-Path $tmp 'DayOneMcp.exe') $ExePath -Force
+        Install-ServerExe (Join-Path $tmp 'DayOneMcp.exe')
     } finally {
         Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue
     }

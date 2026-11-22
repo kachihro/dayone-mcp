@@ -8,6 +8,9 @@ All notable changes to this project are listed here. Versions follow [semantic v
 - Works with **nvm** (Node Version Manager): nvm keeps separate global npm packages for each Node
   version, so after `nvm use` the Day One CLI could seem to vanish. The installer now looks in every
   nvm Node version and saves the CLI's real location (not nvm's "current version" shortcut).
+- Windows: updating no longer fails with "the process cannot access the file" when Claude Desktop is
+  running Day One MCP. The running copy is renamed aside (Windows allows that) and the new one put in
+  place; Claude Desktop picks it up when it restarts. Old copies are cleaned up on the next run.
 
 ### MCP server
 - Also searches nvm's Node version folders for the Day One CLI (Windows: `C:\nvm4w`, `%LOCALAPPDATA%\nvm`,
