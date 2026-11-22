@@ -474,7 +474,6 @@ fi
 
 DAYONE="$(find_dayone || true)"
 if [ -z "$DAYONE" ]; then
-  ask "Install the Day One CLI?" || { warn "The Day One CLI is required."; exit 1; }
   info "Installing the Day One CLI..."
   if ! quiet npm install -g @dayone/cli@latest; then
     warn "Installing the Day One CLI failed:"; show_out

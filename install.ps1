@@ -538,7 +538,6 @@ if ((Get-NodeMajor) -ge 18) { Ok "Node.js $nodeVersion" }
 
 $dayoneExe = Find-DayOneExe
 if (-not $dayoneExe) {
-    if (-not (Ask 'Install the Day One CLI?')) { throw 'The Day One CLI is required.' }
     Info 'Installing the Day One CLI...'
     if ((Invoke-Native { npm install -g '@dayone/cli@latest' }) -ne 0) { throw 'Installing the Day One CLI failed (see above).' }
     Refresh-Path

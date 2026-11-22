@@ -15,7 +15,7 @@
           background: #0d1117; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; white-space: nowrap; }
   .code .k { color: var(--accent); }
   .pill { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
-  .pill div { font-size: 15px; font-weight: 600; color: #cfe0ff; background: rgba(107,163,245,.1); border: 1px solid rgba(107,163,245,.25);
+  .pill div { font-size: 15px; font-weight: 600; color: var(--text); background: rgba(107,163,245,.1); border: 1px solid rgba(107,163,245,.25);
               border-radius: 10px; padding: 10px 12px; }
   .ask { margin-top: auto; padding: 14px 16px; border-radius: 14px; font-size: 16px; font-weight: 600; color: #fff;
          background: linear-gradient(100deg, rgba(43,136,216,.95), rgba(122,63,229,.95)); }
@@ -36,14 +36,14 @@
     <div class="card step">
       <div class="num">2</div>
       <h3>Paste one line</h3>
-      <p>Open PowerShell (or Terminal on Mac) and paste. It sets everything up and signs you in to Day One.</p>
+      <p>Open PowerShell (or Terminal on Mac) and paste. It checks and installs Node.js and the Day One CLI, then signs you in.</p>
       <div class="code"><span class="k">irm</span> https://raw.githubusercontent.com/<br>&nbsp;&nbsp;kachihro/dayone-mcp/main/install.ps1 <span class="k">| iex</span></div>
       <p style="font-size:13.5px;color:var(--text-faint)">Mac / Linux: a similar <code style="font-family:'JB Mono'">curl … | bash</code> line, in the README</p>
     </div>
     <div class="card step">
       <div class="num">3</div>
-      <h3>Restart &amp; ask</h3>
-      <p>Fully quit and reopen Claude, then ask about your journal in plain English.</p>
+      <h3>Ask away</h3>
+      <p>The installer restarts Claude Desktop for you. Start a new chat and ask about your journal.</p>
       <div class="ask">What did I write on this day in previous years?</div>
     </div>
   </div>

@@ -19,6 +19,8 @@ const { chromium } = playwright;
 const srcDir = path.dirname(fileURLToPath(import.meta.url));
 const outDir = path.resolve(srcDir, '..');
 const only = process.argv.slice(2);
+// Images that also get a light-theme version (<name>-light.png). The installer stays dark: it's a terminal.
+const THEMED = ['hero', 'steps', 'how-to-use', 'plugin', 'how-it-works'];
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1400, height: 1000 }, deviceScaleFactor: 2 });
@@ -32,6 +34,14 @@ for (const file of fs.readdirSync(srcDir).filter((f) => f.endsWith('.html'))) {
   const out = path.join(outDir, `${name}.png`);
   await shot.screenshot({ path: out, omitBackground: true });
   console.log(`rendered ${path.relative(process.cwd(), out)}`);
+
+  // A light-theme version too, so the README can match the reader's GitHub theme.
+  if (THEMED.includes(name)) {
+    await page.evaluate(() => document.body.classList.add('light'));
+    const lightOut = path.join(outDir, `${name}-light.png`);
+    await shot.screenshot({ path: lightOut, omitBackground: true });
+    console.log(`rendered ${path.relative(process.cwd(), lightOut)}`);
+  }
 }
 
 // The app icon (used by the Claude Desktop extension and the Claude Code plugin).

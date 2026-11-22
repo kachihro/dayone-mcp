@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="docs/images/hero.png" alt="Day One MCP: search and reflect on your Day One journal with AI. Works as a Claude Code plugin, with Claude Desktop, VS Code and any MCP app, on Windows, Mac and Linux. By kachihro." width="100%">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/hero-light.png">
+    <img src="docs/images/hero.png" alt="Day One MCP by kachihro: one command sets it up, then search and reflect on your Day One journal with AI. Read-only, on your own computer. Works as a Claude Code plugin, with Claude Desktop, VS Code and any MCP app, on Windows, Mac and Linux." width="100%">
+  </picture>
 </p>
 
 <p align="center">
@@ -10,506 +13,253 @@
   <a href="https://ko-fi.com/kachihro"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee%20%28or%20a%20beer!%29-Ko--fi-FF5E5B?logo=ko-fi&logoColor=white" alt="Buy me a coffee (or a beer!) on Ko-fi"></a>
 </p>
 
+<h3 align="center">One command. Then read-only access to query your Day One journals with AI.</h3>
+
 <p align="center">
-  Free and open source, from <a href="https://www.kachihro.com"><b>kachihro</b></a>, the makers of
-  <a href="https://www.waffle-assist.com">Waffle-Assist</a> and <a href="https://www.spo-assist.com">SPO-Assist</a>.
+  The installer checks and installs <b>Node.js</b> and the official <b>Day One CLI</b> for you, signs you in,<br>
+  and connects <b>Claude Code</b> and <b>Claude Desktop</b>. Free and open source, from
+  <a href="https://www.kachihro.com"><b>kachihro</b></a>.
 </p>
+
+> 🔒 **Read-only, by design.** Day One MCP can **search and read** your journal, but it can't create,
+> change or delete anything. Your journal stays exactly as you wrote it, and everything runs **on your
+> own computer**.
 
 ---
 
-Ask things like:
+## 🚀 Install
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/steps-light.png">
+    <img src="docs/images/steps.png" alt="Get started in 3 steps: 1. Install Claude Desktop or Claude Code. 2. Paste one line into PowerShell or Terminal: it checks and installs Node.js and the Day One CLI, then signs you in. 3. Ask away: the installer restarts Claude Desktop for you." width="100%">
+  </picture>
+</p>
+
+**1. Have Claude ready.** Install [Claude Desktop](https://claude.ai/download) (easiest if you're not a
+developer) or Claude Code first. The installer connects whichever ones it finds.
+
+**2. Paste one line.**
+
+**🪟 Windows:** press the **Windows key**, type `PowerShell`, press **Enter**, then paste this (right-click
+pastes) and press **Enter**:
+
+```powershell
+irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.ps1 | iex
+```
+
+**🍎 Mac / 🐧 Linux:** open **Terminal** (Mac: **Cmd+Space**, type `Terminal`, **Enter**), paste this and
+press **Enter**:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.sh | bash
+```
+
+**3. Answer a few questions.** The installer does the rest:
+
+| | What it does |
+|---|---|
+| 📦 **Checks what you need** | Installs the official **Day One CLI**, and offers to install **Node.js** if it's missing or too old |
+| 🚀 **Adds Day One MCP** | Downloads the server, installs the **Claude Code plugin**, and connects **Claude Desktop** (restarting it for you) |
+| 🔐 **Signs you in** | Your Day One **email** and **password** (it shows `*`, and pasting works). They go straight to the Day One CLI and are never shown, saved, or seen by the AI |
+| 🔑 **Unlocks encrypted journals** | If your journals are end-to-end encrypted, it shows where to find your key and checks it works |
+| 📔 **Downloads your journals** | With a live progress count, then lists them |
+
+<details>
+<summary>🔑 <b>Where's my encryption key?</b></summary>
+<br>
+
+1. Open Day One on your phone, your computer or [dayone.me](https://dayone.me).
+2. Go to:
+   - **iPhone / Android:** profile picture → **Sync** → **Encryption Key**
+   - **Mac:** **Settings** → **Sync** → **Advanced** → **View Encryption Key**
+   - **Windows / dayone.me:** **Settings** → **Account** → **Encryption Key**
+3. Copy the key (it starts with `D1-`) and paste it into the installer.
+
+Day One's guide if it's lost: [Finding a lost encryption key](https://dayoneapp.com/guides/troubleshooting/finding-a-lost-encryption-key/).
+
+</details>
+
+<details>
+<summary>👀 <b>See what the installer looks like</b></summary>
+<br>
+<img src="docs/images/installer.png" alt="Installer output in PowerShell. Part 1, Adding Day One MCP: checks Node.js and the Day One CLI, installs the server, the Claude Code plugin and Claude Desktop. Part 2, Setting it up for you: signs in, asks for the encryption key with 3 steps to find it, unlocks entries and lists 3 journals. All done." width="100%">
+</details>
+
+**4. That's it!** 🎉 Start a new chat (Claude Desktop) or a new session (Claude Code) and ask about your
+journal.
+
+---
+
+## 💬 How to use
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/how-to-use-light.png">
+    <img src="docs/images/how-to-use.png" alt="How to use it. In Claude Desktop, just ask in a new chat, for example 'When did I go to Hamburg?'. In Claude Code, type /dayone: /dayone:on-this-day, /dayone:search trips to Japan, /dayone:reflect last month, /dayone:setup." width="100%">
+  </picture>
+</p>
+
+### 💻 In Claude Desktop: just ask
+
+Start a **new chat** and ask in plain English:
 
 - *"What did I write on this day in previous years?"*
-- *"Find my entries about the beach from last summer. How was I feeling?"*
-- *"When did I last mention Mum's birthday?"*
-- *"Reflect on my journal from last month."*
+- *"When did I go to Hamburg?"*
+- *"How was I feeling in the weeks before the move?"*
+- *"Summarise my travel journal from 2024."*
 
-> 🔒 **Read-only, by design.** Day One MCP can **search and read** your journal, but it can't create,
-> change or delete anything. Your journal stays exactly as you wrote it.
+### ⚡ In Claude Code: type `/dayone`
 
-**How it works, in one line:** [MCP](https://modelcontextprotocol.io) is the standard way AI apps
-connect to tools. This project is an MCP tool that reads your journal through the
-[Day One CLI](https://github.com/Automattic/DayOne-Cli), Day One's official command-line program.
-Everything runs **on your own computer**.
+| Type this | What you get |
+|---|---|
+| `/dayone:on-this-day` | Your entries from today in past years. Add a date: `/dayone:on-this-day Christmas` |
+| `/dayone:search <topic>` | Searches with related words and summarises, e.g. `/dayone:search trips to Japan` |
+| `/dayone:reflect <period>` | Highlights, themes and mood, e.g. `/dayone:reflect last month` |
+| `/dayone:setup` | Checks everything works and tells you what to fix |
 
-> **On a Mac?** Day One also has its own [built-in MCP server](https://dayoneapp.com/guides/day-one-for-mac/day-one-mcp-server/).
-> See [Other options](#other-options) to pick the right one for you.
+Or just ask in plain English. The first time, Claude Code asks permission to use the Day One tools:
+choose **Yes, and don't ask again**.
+
+> 💡 **Tips:** Wrote something new? Ask Claude to *"sync my journal"* first. On Windows and Intel Macs,
+> search matches your words exactly, so try a few related words (`/dayone:search` does this for you).
 
 ---
 
 ## 📋 Commands at a glance
 
-New here? Start with [Quick start](#quick-start). Come back to this section any time you need a command.
-
-### 🪟 Windows (PowerShell)
+<details open>
+<summary><b>🪟 Windows</b> (PowerShell)</summary>
 
 **Install, or update to the latest version**
 ```powershell
 irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.ps1 | iex
 ```
-
 **Sign in, add your encryption key, switch account, or re-sync**
 ```powershell
 irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/configure.ps1 | iex
 ```
-
 **Uninstall** (then asks whether to also remove the Day One CLI, for a fresh start)
 ```powershell
 irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/uninstall.ps1 | iex
 ```
 
-### 🍎 Mac and 🐧 Linux (Terminal)
+</details>
+
+<details open>
+<summary><b>🍎 Mac / 🐧 Linux</b> (Terminal)</summary>
 
 **Install, or update to the latest version**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.sh | bash
 ```
-
 **Sign in, add your encryption key, switch account, or re-sync**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/configure.sh | bash
 ```
-
 **Uninstall** (then asks whether to also remove the Day One CLI, for a fresh start)
 ```bash
 curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/uninstall.sh | bash
 ```
 
-### ⚡ In Claude Code
+</details>
 
-| Type this | What it does |
-|---|---|
-| `/dayone:on-this-day` | Your entries from today in past years. Add a date: `/dayone:on-this-day Christmas` |
-| `/dayone:search <topic>` | Searches your journal and summarises it, e.g. `/dayone:search trips to Japan` |
-| `/dayone:reflect <period>` | Highlights, themes and mood, e.g. `/dayone:reflect last month` |
-| `/dayone:setup` | Checks everything is working and tells you what to fix |
-| `/mcp` | Shows connected servers. Look for `plugin:dayone:dayone` |
-| `/plugin` | Manage plugins: update or remove the Day One plugin |
-
-Or just ask in plain English: *"What did I write on this day in previous years?"*
-
-### 📔 Day One CLI (optional extras, in PowerShell or Terminal)
-
-| Command | What it does |
-|---|---|
-| `dayone sync` | Download your latest entries now |
-| `dayone sync-schedule enable --interval-minutes 30` | Keep your entries up to date automatically |
-| `dayone list journals` | List your journals |
-| `dayone doctor` | Check the Day One CLI's setup (safe to share: no journal text) |
-
-💜 Enjoying it? [Buy me a coffee (or a beer! 🍺) on Ko-fi](https://ko-fi.com/kachihro)
+**Day One CLI extras** (in PowerShell or Terminal): `dayone sync` downloads your latest entries now ·
+`dayone sync-schedule enable --interval-minutes 30` keeps them up to date automatically ·
+`dayone list journals` lists your journals.
 
 ---
 
-## Quick start
-
-<p align="center"><img src="docs/images/steps.png" alt="Get started in 3 steps: 1. Install Claude Desktop or Claude Code. 2. Paste one line into PowerShell or Terminal. 3. Restart Claude and ask about your journal." width="100%"></p>
-
-**1. Install the Claude app you want to use first**: [Claude Desktop](https://claude.ai/download)
-(easiest if you're not a developer) or Claude Code. The installer connects whichever ones it finds.
-If you install another one later, just run the installer again.
-
-**2. Run the installer.** It works in two parts:
-- ➕ **Part 1, adding Day One MCP:** Node.js, the Day One CLI, the server, and the connection to Claude.
-- 👤 **Part 2, setting it up for you:** your Day One sign-in, your encryption key if needed, and your journals.
-
-<details open>
-<summary><b>Windows</b></summary>
-
-Open **PowerShell**: press the **Windows key**, type `PowerShell`, and press **Enter**. Paste this
-line (right-click pastes), then press **Enter**. You don't need to run it as administrator.
-
-```powershell
-irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.ps1 | iex
-```
-
-</details>
-
-<details open>
-<summary><b>macOS / Linux</b></summary>
-
-Open **Terminal** (Mac: press **Cmd+Space**, type `Terminal`, press **Enter**), paste this line,
-then press **Enter**:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.sh | bash
-```
-
-</details>
+## ❓ FAQs
 
 <details>
-<summary>👀 See what the installer looks like</summary>
+<summary><b>Is it really read-only?</b></summary>
 <br>
-<img src="docs/images/installer.png" alt="Installer output in PowerShell. Part 1, Adding Day One MCP: checks Node.js and the Day One CLI, installs the server, the Claude Code plugin and Claude Desktop. Part 2, Setting it up for you: signs in, asks for the encryption key with 3 steps to find it, unlocks entries and lists 3 journals. All done." width="100%">
-</details>
 
-In Part 2 you type your Day One **email** and **password** (it shows `*`, and pasting works). They
-go straight to the Day One CLI and are never shown, saved in your history, or seen by the AI.
-
-> 🔑 **Encrypted journals?** The installer spots this and asks for your encryption key. To get it:
-> 1. Open Day One on your phone, the Windows app or [dayone.me](https://dayone.me).
-> 2. Go to **iPhone / Android:** profile picture → **Sync** → **Encryption Key** · **Windows / dayone.me:** **Settings** → **Account** → **Encryption Key**.
-> 3. Copy the key (it starts with `D1-`) and paste it into the installer. It checks the key really unlocks your entries.
-
-Signed in to Day One with Google or Apple? Set a password first with **Forgot password** at
-[dayone.me](https://dayone.me).
-
-**3. Restart Claude.**
-- **Claude Desktop:** fully quit it (Windows: right-click its icon near the clock → **Quit**; Mac: **Cmd+Q**), then reopen it.
-- **Claude Code:** start a new session.
-
-Then ask *"What did I write on this day in previous years?"* 🎉
-
-### Later: sign in, add your key, or switch account
-
-Run **configure**. It runs just Part 2 (account, encryption key and sync) without reinstalling anything:
-
-**Windows** (PowerShell):
-
-```powershell
-irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/configure.ps1 | iex
-```
-
-**macOS / Linux** (Terminal):
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/configure.sh | bash
-```
-
----
-
-## 💬 Using it in Claude Code
-
-The installer adds the **Day One plugin** to Claude Code for all your projects, so you can use it in
-any folder.
-
-**1. Check it's connected.** Start a new Claude Code session and run:
-
-```
-/dayone:setup
-```
-
-It checks the Day One CLI, your sign-in and the server, and tells you exactly what to fix if
-anything's wrong. (You can also run `/mcp` and look for `plugin:dayone:dayone` ✔ connected.)
-
-**2. Use the commands.** Type `/dayone` to see them:
-
-| Command | Try | What you get |
-|---|---|---|
-| `/dayone:on-this-day` | `/dayone:on-this-day` or `/dayone:on-this-day Christmas` | Your entries from this day in past years, with how many years ago |
-| `/dayone:search` | `/dayone:search trips to Japan` | Searches several related words and summarises what it finds, with dates |
-| `/dayone:reflect` | `/dayone:reflect last month` or `/dayone:reflect 2024` | Highlights, themes and mood for that period |
-| `/dayone:setup` | `/dayone:setup` | A health check of the whole setup |
-
-**3. Or just ask in plain English.** The plugin teaches Claude how to search your journal well:
-
-> *What did I write on this day in previous years?*<br>
-> *When did I last mention Mum's birthday?*<br>
-> *How was I feeling in the weeks before the move?*<br>
-> *Summarise my travel journal from 2024.*
-
-The first time Claude uses a Day One tool, Claude Code asks permission. Choose **Yes, and don't ask
-again** for the Day One tools so it doesn't ask every time. They're read-only: they can't change or
-delete anything in your journal.
-
-> 💡 Entries you've just written? Ask Claude to *"sync my journal"* first, or turn on automatic
-> syncing: `dayone sync-schedule enable --interval-minutes 30`.
-
-Using **Claude Desktop** instead? The installer closes it while it saves the setting (if it's open,
-Claude Desktop can undo the change) and reopens it at the end. Then just **ask in plain English** in a
-new chat: the `/dayone:` commands are Claude Code only. Check **Settings → Plugins**: **dayone** should
-be listed as a *Local MCP server*.
-
-Prefer to set things up yourself, or using VS Code or another app? Read on.
-
----
-
-## Set up the Day One CLI (manual setup only)
-
-The installer does this for you. Everything else in this guide needs it.
-
-1. Install [Node.js](https://nodejs.org) LTS, version 18 or newer. The Day One CLI needs it. On
-   Windows you can run `winget install OpenJS.NodeJS.LTS`, then **close and reopen PowerShell**.
-2. In PowerShell (Windows) or Terminal (Mac/Linux), run these one at a time:
-   ```
-   npm install -g @dayone/cli@latest
-   dayone setup
-   dayone sync
-   ```
-   `dayone setup` asks for your Day One email and password. `dayone sync` downloads your journals
-   to your computer, and the first sync can take a few minutes.
-
-   > **Windows tip:** the password prompt in `dayone setup` shows nothing and pasting can fail.
-   > This signs in with a `*` prompt that accepts pasting:
-   > ```powershell
-   > $p = Read-Host 'Day One password' -AsSecureString
-   > [System.Net.NetworkCredential]::new('', $p).Password | dayone auth login --email you@example.com --password-stdin | Out-Null
-   > Remove-Variable p
-   > ```
-3. If your journals use **end-to-end encryption**, also run `dayone auth key-set`.
-4. Check it worked: `dayone list journals` should list your journals.
-
----
-
-## Option 1: Claude Code plugin
-
-**Best for Claude Code users.** It adds ready-made commands as well as the journal tools.
-
-<p align="center"><img src="docs/images/plugin.png" alt="Claude Code plugin: install with /plugin install dayone --marketplace kachihro/dayone-mcp. Commands: /dayone:on-this-day, /dayone:search, /dayone:reflect and /dayone:setup." width="100%"></p>
-
-> **Used the installer?** It already installed the plugin. Start a new session and run `/dayone:setup`.
-
-1. [Set up the Day One CLI](#set-up-the-day-one-cli-manual-setup-only).
-2. In Claude Code, run:
-   ```
-   /plugin install dayone --marketplace kachihro/dayone-mcp
-   ```
-   <sub>On Claude Code older than 2.1.275 (check with `claude --version`), run
-   `/plugin marketplace add kachihro/dayone-mcp` and then `/plugin install dayone@dayone-mcp` instead.</sub>
-3. Start a new session and run **`/dayone:setup`** to check everything's working.
-
-The first time it starts, the plugin downloads its server (about 40 MB) and verifies the download.
-
-See [Using it in Claude Code](#-using-it-in-claude-code) for the commands and examples.
-
----
-
-## Option 2: MCP server
-
-**For Claude Desktop, VS Code (GitHub Copilot), Cursor, or any app that supports MCP.**
-
-### Step 1: Get the server
-
-**Easiest:** run the [installer](#quick-start). It works even if you don't use Claude (it skips the
-Claude steps). It puts the server here:
-
-| | Server location |
-|---|---|
-| Windows | `%LOCALAPPDATA%\Programs\dayone-mcp\DayOneMcp.exe` (that's `C:\Users\<you>\AppData\Local\Programs\dayone-mcp\DayOneMcp.exe`) |
-| macOS / Linux | `~/.local/share/dayone-mcp/DayOneMcp` |
-
-<details>
-<summary>Or download it yourself</summary>
-
-1. [Set up the Day One CLI](#set-up-the-day-one-cli-manual-setup-only).
-2. From the [latest release](https://github.com/kachihro/dayone-mcp/releases/latest), download the file for your computer:
-
-   | Computer | File |
-   |---|---|
-   | Windows | `dayone-mcp-win-x64.zip` |
-   | Mac with Apple silicon (M1 and later) | `dayone-mcp-osx-arm64.tar.gz` |
-   | Mac with Intel | `dayone-mcp-osx-x64.tar.gz` |
-   | Linux | `dayone-mcp-linux-x64.tar.gz` or `dayone-mcp-linux-arm64.tar.gz` |
-
-3. Before extracting:
-   - **Windows:** right-click the zip → **Properties** → tick **Unblock** → **OK**.
-   - **Mac:** after extracting, run `xattr -d com.apple.quarantine /path/to/DayOneMcp` once.
-4. Extract it somewhere permanent, then check it:
-   - Windows (PowerShell, in that folder): `.\DayOneMcp.exe --check`
-   - Mac/Linux (in that folder): `./DayOneMcp --check`
-
-   It should say `OK: Day One CLI found, N journal(s) available`.
-
-</details>
-
-### Step 2: Connect your app
-
-In the examples, replace `YOU` / `you` with your user name (the folder name under `C:\Users` or
-`/Users`), or use the path where you put the server.
-
-<details open>
-<summary><b>Claude Desktop</b></summary>
-
-The installer does this for you.
-
-**Windows shortcut:** download `dayone-mcp-win-x64.mcpb` from the
-[latest release](https://github.com/kachihro/dayone-mcp/releases/latest) and double-click it to
-install it as a Claude Desktop extension. You still need the
-[Day One CLI](#set-up-the-day-one-cli-manual-setup-only). This extension is Windows-only for now.
-
-**By hand:** in Claude Desktop, open **Settings → Developer → Edit Config**. This shows the file
-`claude_desktop_config.json`; open it in a text editor such as Notepad. Add the `dayone` entry:
-
-```json
-{
-  "mcpServers": {
-    "dayone": { "command": "C:\\Users\\YOU\\AppData\\Local\\Programs\\dayone-mcp\\DayOneMcp.exe" }
-  }
-}
-```
-
-- If the file already has an `"mcpServers"` section, add just the `"dayone": { ... }` line inside it,
-  with a comma after the entry before it.
-- In JSON, Windows paths need **double** backslashes (`\\`).
-- Mac/Linux path: `"/Users/you/.local/share/dayone-mcp/DayOneMcp"`.
-
-Save the file, then fully quit Claude Desktop and reopen it.
+Yes. Day One MCP only has tools to **search, list and read** entries, plus one to download your latest
+entries from Day One. There are no tools to create, edit or delete anything, so the AI can't change your
+journal even if asked to.
 
 </details>
 
 <details>
-<summary><b>VS Code (GitHub Copilot)</b></summary>
+<summary><b>What does the installer change on my computer?</b></summary>
+<br>
 
-Open the Command Palette (**Ctrl+Shift+P**, Mac: **Cmd+Shift+P**) and run **MCP: Add Server** →
-**Command (stdio)**, then enter the server path. Or run **MCP: Open User Configuration** (all
-projects), or create `.vscode/mcp.json` (one project), and add:
+- **Node.js:** only if it's missing or older than version 18, and only if you say yes.
+- **The Day One CLI:** Day One's official command-line tool (`@dayone/cli`, installed with npm).
+- **Day One MCP:** one program in `%LOCALAPPDATA%\Programs\dayone-mcp` (Windows) or
+  `~/.local/share/dayone-mcp` (Mac/Linux).
+- **Claude Code:** the Day One plugin. **Claude Desktop:** one `dayone` entry in its settings file (a backup is kept).
 
-```json
-{
-  "servers": {
-    "dayone": {
-      "type": "stdio",
-      "command": "C:\\Users\\YOU\\AppData\\Local\\Programs\\dayone-mcp\\DayOneMcp.exe"
-    }
-  }
-}
-```
-
-Mac/Linux path: `"/Users/you/.local/share/dayone-mcp/DayOneMcp"`. Then open Copilot Chat in
-**Agent** mode. If the tools don't appear, turn on `dayone` in the tools picker.
+Uninstall removes all of it (see [Commands at a glance](#-commands-at-a-glance)).
 
 </details>
 
 <details>
-<summary><b>Claude Code (without the plugin)</b></summary>
+<summary><b>Which AI apps does it work with?</b></summary>
+<br>
 
-```
-claude mcp add --scope user dayone -- "C:\Users\YOU\AppData\Local\Programs\dayone-mcp\DayOneMcp.exe"
-```
+**Claude Desktop** and **Claude Code** are set up automatically. It also works with **VS Code (GitHub
+Copilot)**, **Cursor** and any other app that supports MCP: see [Connect another app](docs/manual-setup.md#connect-another-app).
 
 </details>
 
 <details>
-<summary><b>Cursor and other apps</b></summary>
+<summary><b>Does my journal leave my computer?</b></summary>
+<br>
 
-Most apps use this format (Cursor: `~/.cursor/mcp.json`):
-
-```json
-{
-  "mcpServers": {
-    "dayone": { "command": "/Users/you/.local/share/dayone-mcp/DayOneMcp" }
-  }
-}
-```
-
-The server uses stdio and takes no arguments. You only need the optional `DAYONE_CLI_PATH`
-environment variable if it can't find the Day One CLI (see [Troubleshooting](#troubleshooting)).
+Day One MCP runs on your computer, has no servers, and collects no data. Your Day One password only ever
+goes to the Day One CLI. The entries the AI reads to answer a question are sent to your AI provider (for
+example Anthropic), like anything else you share in a chat, so you choose what to ask about.
 
 </details>
-
----
-
-## Using it
-
-These tools are available to the AI:
-
-| Tool | What it does |
-|---|---|
-| `search_entries` | Search, filtered by date range, journal, tags, starred or media (photos, audio and so on) |
-| `on_this_day` | Entries from today (or any date) in previous years |
-| `list_journals` | Your journals |
-| `list_entries` | Browse a journal, newest or oldest first |
-| `read_entry` | Read one entry in full |
-| `sync_journals` | Download your latest entries from Day One |
-
-**Tips**
-
-- Searches use the **copy of your journals on your computer**. Ask the AI to *"sync my journal"*,
-  or keep it up to date automatically:
-  ```
-  dayone sync-schedule enable --interval-minutes 30
-  ```
-- **On Windows and Intel Macs, search is keyword-only**: it finds the words you use, not ones with
-  similar meanings, so try related words. On Apple silicon Macs and most Linux, the Day One CLI can
-  also match by meaning. The Claude Code plugin's `/dayone:search` tries related words for you.
-- Dates use your computer's time zone, so an entry written at 11 pm stays on the right day.
-
----
-
-## Updating and uninstalling
-
-| You installed with | Update | Uninstall |
-|---|---|---|
-| The installer | Run it again (this updates Claude Desktop's server, and Claude Code's plugin too). To only re-sync or change account, run [configure](#later-sign-in-add-your-key-or-switch-account). | [Uninstall](#uninstall) |
-| The Claude Code plugin | `claude plugin update dayone@dayone-mcp`, or `/plugin` in Claude Code | `claude plugin uninstall dayone@dayone-mcp`, or `/plugin` in Claude Code |
-| A manual download | Quit your AI app, then replace the file with the new release | Delete the file and remove the entry from your app's config |
-
-### Uninstall
-
-**Windows** (PowerShell):
-
-```powershell
-irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/uninstall.ps1 | iex
-```
-
-It removes the server, the Claude Code plugin and the Claude Desktop connection. Then it asks
-whether to also **sign out and remove the Day One CLI** and its downloaded copy of your journals.
-Your journals always stay safe in your Day One account.
-
-**macOS / Linux** (Terminal):
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/uninstall.sh | bash
-```
-
-### 🔄 Start again from scratch
-
-1. Run **uninstall** (above) and answer **y** to remove the Day One CLI too.
-2. Restart Claude Desktop and Claude Code.
-3. Run the **install** line from [Quick start](#quick-start).
-
----
-
-## Privacy
-
-<p align="center"><img src="docs/images/how-it-works.png" alt="How it works: your AI app talks over MCP to Day One MCP (read-only), which uses the Day One CLI to read the copy of your journals on your computer. Everything runs on your computer." width="100%"></p>
-
-- Runs entirely **on your computer**. This project has no servers and collects no data or analytics.
-- It turns off the Day One CLI's optional telemetry for every command it runs.
-- Your Day One password goes straight to the Day One CLI. It's never shown or saved, and the AI never sees it.
-- **Note:** the entries the AI reads to answer a question are sent to your AI provider (for
-  example Anthropic or GitHub), like anything else you share in a chat. You choose what to ask about.
-
----
-
-## Troubleshooting
-
-Using Claude Code? Run **`/dayone:setup`** first. It checks each piece and tells you what to fix.
-
-| Problem | Fix |
-|---|---|
-| Is it working at all? | Windows: `& "$env:LOCALAPPDATA\Programs\dayone-mcp\DayOneMcp.exe" --check` · Mac/Linux: `~/.local/share/dayone-mcp/DayOneMcp --check` |
-| The installer didn't connect Claude | Install Claude Desktop or Claude Code first, then run the installer again. |
-| No journals, or "run dayone sync first" | Run [configure](#later-sign-in-add-your-key-or-switch-account): it signs you in and downloads your journals. Or run `dayone sync`. |
-| "Email and password combination not found" | Check for typos (the installer shows `*` for each character). If you sign in to Day One with Google or Apple, set a password first with **Forgot password** at [dayone.me](https://dayone.me). |
-| Encrypted journals show nothing, or "no verified journal key" | Run [configure](#later-sign-in-add-your-key-or-switch-account). It notices, shows where to find your key, and checks the key unlocks your entries. By hand: `dayone auth key-set`, then `dayone sync`. |
-| "Can't find the Day One CLI" | Re-run the installer. It finds the CLI (including in any Node version managed by **nvm**) or installs it, and reconnects it. Or tell the server where it is with the `DAYONE_CLI_PATH` environment variable (see below). |
-| Claude Code: `plugin:dayone:dayone` failed in `/mcp` | The first start downloads the server, which can time out on a slow connection. Restart Claude Code. |
-| Claude Code: tools don't appear | Start a **new** session after installing. |
-| Claude Desktop: **dayone** isn't in Settings → Plugins | Run the installer again and let it close Claude Desktop. If Claude Desktop is open while the setting is saved, it can undo the change when it quits. Logs: `%APPDATA%\Claude\logs` (Windows), `~/Library/Logs/Claude` (Mac). |
-| Claude Desktop: "`/dayone` isn't installed" | The `/dayone:` commands are Claude Code only. In Claude Desktop, just ask in plain English, e.g. *"When did I go to Hamburg?"* |
-| Windows SmartScreen warning | The program isn't code-signed yet. Choose **More info → Run anyway**, or [build it yourself](#for-developers). |
 
 <details>
-<summary><b>Setting <code>DAYONE_CLI_PATH</code></b></summary>
+<summary><b>Why do the <code>/dayone:</code> commands not work in Claude Desktop?</b></summary>
+<br>
 
-First, find the full path of the Day One CLI program:
-
-- **Windows** (PowerShell): `Join-Path (npm root -g) '@dayone\cli\node_modules\@dayone\cli-win32-x64\dayone.exe'`.
-  Don't use `where.exe dayone`, which finds a launcher script rather than the program itself.
-- **Mac/Linux:** `which dayone`
-
-Then set it for your app:
-
-- **Claude Desktop / VS Code / Cursor:** add `"env": { "DAYONE_CLI_PATH": "<path>" }` next to `"command"` in the `dayone` entry.
-- **Claude Code plugin:** add `"env": { "DAYONE_CLI_PATH": "<path>" }` to `~/.claude/settings.json`, then restart Claude Code.
-
-Remember to use double backslashes (`\\`) for Windows paths in JSON.
+They're Claude Code commands. In Claude Desktop, just ask in plain English in a new chat, for example
+*"When did I go to Hamburg?"*.
 
 </details>
 
-Still stuck? [Open an issue](https://github.com/kachihro/dayone-mcp/issues/new/choose). Please
-don't include journal text or passwords.
+<details>
+<summary><b>Is this an official Day One product?</b></summary>
+<br>
+
+No, it's an independent community project by [kachihro](https://www.kachihro.com). It uses Day One's
+official, public [Day One CLI](https://github.com/Automattic/DayOne-Cli) and no private APIs. On a Mac,
+Day One also has its own [built-in MCP server](https://dayoneapp.com/guides/day-one-for-mac/day-one-mcp-server/):
+see [Other options](#other-options).
+
+</details>
+
+<details>
+<summary><b>Something's not working. What should I do?</b></summary>
+<br>
+
+1. Run the installer again. It's safe to re-run, and it fixes most things (it skips what's already done).
+2. In Claude Code, run `/dayone:setup`. It checks each piece and tells you what to fix.
+3. See the full [troubleshooting guide](docs/troubleshooting.md), or
+   [open an issue](https://github.com/kachihro/dayone-mcp/issues/new/choose). Please don't include journal text or passwords.
+
+</details>
+
+---
+
+## 🔒 Privacy and how it works
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/how-it-works-light.png">
+    <img src="docs/images/how-it-works.png" alt="How it works: your AI app talks over MCP to Day One MCP (read-only), which uses the Day One CLI to read the copy of your journals on your computer. Everything runs on your computer." width="100%">
+  </picture>
+</p>
+
+[MCP](https://modelcontextprotocol.io) is the standard way AI apps connect to tools. Day One MCP reads
+the copy of your journals that the official Day One CLI keeps on your computer. It turns off the CLI's
+optional telemetry, and it never sees your password.
 
 ---
 
@@ -524,8 +274,6 @@ Day One MCP is one way to use your journal with AI. Day One also offers:
   [command-line tool](https://github.com/Automattic/DayOne-Cli) works in a terminal on Windows, Mac and
   Linux, and Claude Code can run it directly. It can also write entries.
 
-**Which should I use?**
-
 | You want | Best fit |
 |---|---|
 | Windows or Linux | **Day One MCP** |
@@ -534,11 +282,14 @@ Day One MCP is one way to use your journal with AI. Day One also offers:
 | Read-only, so nothing in your journal can change | **Day One MCP** |
 | Claude to create or edit entries, on a Mac | Day One's built-in MCP server |
 
-## For developers
+---
 
-The server is C# / .NET 10, built on the official
-[MCP C# SDK](https://github.com/modelcontextprotocol/csharp-sdk). Building, testing, the project
-layout and releasing are covered in [CONTRIBUTING.md](CONTRIBUTING.md). Contributions are very welcome! 💛
+## More
+
+- 🛠️ **[Manual setup](docs/manual-setup.md):** set things up by hand, or connect VS Code, Cursor and other apps.
+- 🩺 **[Troubleshooting](docs/troubleshooting.md):** fixes for every message you might see.
+- 👩‍💻 **For developers:** C# / .NET 10 on the official [MCP C# SDK](https://github.com/modelcontextprotocol/csharp-sdk).
+  Building, testing and releasing are in [CONTRIBUTING.md](CONTRIBUTING.md). Contributions are very welcome! 💛
 
 ## Support the project ☕🍺
 
@@ -551,15 +302,10 @@ journal, a small tip helps cover the time that goes into it, and maybe a few cof
 
 Starring the repo ⭐, sharing it with other Day One fans, and [reporting bugs](https://github.com/kachihro/dayone-mcp/issues/new/choose) help too.
 
-### More free tools from kachihro
-
-| | |
-|---|---|
-| [**Waffle-Assist**](https://www.waffle-assist.com) | A smarter Microsoft 365 app launcher |
-| [**SPO-Assist**](https://www.spo-assist.com) | Quick actions for SharePoint Online |
-
-See them all at [kachihro.com/freebies](https://www.kachihro.com/freebies/).
-Need help with Microsoft 365, SharePoint or Azure development? [kachihro can help](https://www.kachihro.com).
+**More free tools from kachihro:** [Waffle-Assist](https://www.waffle-assist.com), a smarter Microsoft 365
+app launcher, and [SPO-Assist](https://www.spo-assist.com), quick actions for SharePoint Online. See them
+all at [kachihro.com/freebies](https://www.kachihro.com/freebies/). Need help with Microsoft 365, SharePoint
+or Azure development? [kachihro can help](https://www.kachihro.com).
 
 ## Disclaimer
 

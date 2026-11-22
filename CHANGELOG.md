@@ -2,6 +2,19 @@
 
 All notable changes to this project are listed here. Versions follow [semantic versioning](https://semver.org).
 
+## Unreleased
+
+### README and docs
+- New, shorter README: one command to install, then read-only access to query your journals. Clear
+  "How to use" for Claude Desktop and Claude Code, copyable commands, and FAQs.
+- Pictures in kachihro branding with light and dark versions that match the reader's GitHub theme, and
+  a new "How to use" picture.
+- Advanced material moved to [Manual setup](docs/manual-setup.md) and [Troubleshooting](docs/troubleshooting.md).
+
+### Installers
+- One fewer question: the Day One CLI is installed automatically (it's required). Installing Node.js
+  still asks first.
+
 ## [1.0.3] - 22/11/2026
 
 Works with nvm, and smoother updates and Claude Desktop restarts on Windows.

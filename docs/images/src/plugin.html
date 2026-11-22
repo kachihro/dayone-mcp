@@ -13,7 +13,7 @@
   .cmd { padding: 16px 18px; display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; }
   .ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 22px;
          background: rgba(107,163,245,.12); border: 1px solid rgba(107,163,245,.25); }
-  .cmd code { font-family: "JB Mono", monospace; font-size: 16px; font-weight: 700; color: #fff; }
+  .cmd code { font-family: "JB Mono", monospace; font-size: 16px; font-weight: 700; color: var(--text); }
   .cmd code em { font-style: normal; color: var(--text-faint); font-weight: 400; }
   .cmd p { margin-top: 3px; color: var(--text-muted); font-size: 15px; }
 </style></head>
@@ -24,7 +24,7 @@
   <div class="left">
     <div class="eyebrow">Claude Code plugin</div>
     <h2>Your journal, one <span class="gradient-text">slash</span> away</h2>
-    <p class="sub">Install it from inside Claude Code. Then type <b style="color:#fff">/dayone</b> to see the commands, or just ask in plain English.</p>
+    <p class="sub">Install it from inside Claude Code. Then type <b style="color:var(--text)">/dayone</b> to see the commands, or just ask in plain English.</p>
     <div class="install"><span class="k">/plugin install</span> dayone --marketplace kachihro/dayone-mcp</div>
   </div>
   <div class="right cmds">
