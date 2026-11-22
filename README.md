@@ -7,6 +7,12 @@
   <a href="https://github.com/kachihro/dayone-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/kachihro/dayone-mcp?color=7a3fe5" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2b88d8" alt="MIT licence"></a>
   <a href="https://www.kachihro.com"><img src="https://img.shields.io/badge/made%20by-kachihro-142e86" alt="Made by kachihro"></a>
+  <a href="https://ko-fi.com/kachihro"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-Ko--fi-FF5E5B?logo=ko-fi&logoColor=white" alt="Buy me a coffee on Ko-fi"></a>
+</p>
+
+<p align="center">
+  Free and open source, from <a href="https://www.kachihro.com"><b>kachihro</b></a>, the makers of
+  <a href="https://www.waffle-assist.com">Waffle-Assist</a> and <a href="https://www.spo-assist.com">SPO-Assist</a>.
 </p>
 
 ---
@@ -365,6 +371,27 @@ The server is C# / .NET 10, built on the official
 [MCP C# SDK](https://github.com/modelcontextprotocol/csharp-sdk). Building, testing, the project
 layout and releasing are covered in [CONTRIBUTING.md](CONTRIBUTING.md). Contributions are very welcome! 💛
 
+## Support the project ☕
+
+Day One MCP is free and built in personal development time. If it helps you get more out of your
+journal, a small tip helps cover the time that goes into it, and maybe a few coffees. 💜
+
+<p>
+  <a href="https://ko-fi.com/kachihro"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Buy me a coffee on Ko-fi"></a>
+</p>
+
+Starring the repo ⭐, sharing it with other Day One fans, and [reporting bugs](https://github.com/kachihro/dayone-mcp/issues/new/choose) help too.
+
+### More free tools from kachihro
+
+| | |
+|---|---|
+| [**Waffle-Assist**](https://www.waffle-assist.com) | A smarter Microsoft 365 app launcher |
+| [**SPO-Assist**](https://www.spo-assist.com) | Quick actions for SharePoint Online |
+
+See them all at [kachihro.com/freebies](https://www.kachihro.com/freebies/).
+Need help with Microsoft 365, SharePoint or Azure development? [kachihro can help](https://www.kachihro.com).
+
 ## Disclaimer
 
 This is an independent community project. It is **not affiliated with or endorsed by Day One or
@@ -380,5 +407,6 @@ Automattic**. "Day One" is a trademark of its owner. It uses the official, publi
 
 <p align="center">
   <a href="https://www.kachihro.com"><img src="docs/images/kachihro-mark.svg" width="36" alt="kachihro"></a><br>
-  <sub>Made with 💜 by <a href="https://www.kachihro.com"><b>kachihro</b></a>, Microsoft 365, SharePoint and Azure development</sub>
+  <sub>Made with 💜 by <a href="https://www.kachihro.com"><b>kachihro</b></a>, Microsoft 365, SharePoint and Azure development
+  · <a href="https://ko-fi.com/kachihro">Buy me a coffee</a></sub>
 </p>
