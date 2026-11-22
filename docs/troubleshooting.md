@@ -26,6 +26,7 @@
 | Claude Desktop: "dayone stopped running" | Click **View logs** on the message. Logs are also in `%APPDATA%\Claude\logs` (Windows) or `~/Library/Logs/Claude` (Mac). Please [open an issue](https://github.com/kachihro/dayone-mcp/issues/new/choose) with the last few lines. |
 | Claude Desktop: "`/dayone` isn't installed" | The `/dayone:` commands are Claude Code only. In Claude Desktop, just ask in plain English, e.g. *"When did I go to Hamburg?"* |
 | Search misses things | On Windows and Intel Macs, search matches your words exactly. Try related words, or use `/dayone:search` in Claude Code, which does this for you. |
+| Claude Desktop says "Unknown developer" | Normal for extensions that aren't code-signed with a paid certificate. Day One MCP is open source and read-only. |
 | Windows SmartScreen warning | The program isn't code-signed yet. Choose **More info → Run anyway**, or build it yourself (see [CONTRIBUTING.md](../CONTRIBUTING.md)). |
 
 ## Setting `DAYONE_CLI_PATH`

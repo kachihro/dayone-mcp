@@ -237,6 +237,17 @@ They're Claude Code commands. In Claude Desktop, just ask in plain English in a 
 </details>
 
 <details>
+<summary><b>Why does Claude Desktop say "Unknown developer"?</b></summary>
+<br>
+
+Claude Desktop says that for any extension that isn't code-signed with a paid certificate, which is
+normal for free, open-source extensions. It doesn't mean anything's wrong. Day One MCP is
+[open source](src/DayOneMcp), read-only, and built and published by GitHub Actions from this repository,
+with checksums for every download.
+
+</details>
+
+<details>
 <summary><b>Is this an official Day One product?</b></summary>
 <br>
 
