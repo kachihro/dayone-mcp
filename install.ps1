@@ -687,9 +687,17 @@ if (-not $SkipClaudeDesktop) {
         } elseif (AskNo 'Not showing up? Connect it the classic way instead (works the same, no icon)?') {
             if (Connect-DesktopConfig $cfg) { $registered += 'Claude Desktop' }
         }
-        # Early test installs used the settings file instead; point out the old entry so there is only one.
-        if ((Get-DesktopExtensionVersion) -and (Test-Path $cfg) -and (Test-DesktopConfig $cfg)) {
-            Info 'Remove the old "dayone" entry from Claude Desktop: Settings > Developer > Edit Config.'
+        # Early test installs used the settings file instead. Once the extension is in, remove that old
+        # entry so Day One shows once (Claude Desktop must be closed, or it puts the entry back).
+        $old = @($cfg, (Join-Path $env:APPDATA 'Claude\claude_desktop_config.json')) | Select-Object -Unique |
+            Where-Object { (Test-Path $_) -and (Select-String -Path $_ -Pattern "`"$ServerName`"" -Quiet) }
+        if ((Get-DesktopExtensionVersion) -and $old) {
+            if (Close-ClaudeDesktop 'remove the old Day One entry, so it shows once') {
+                foreach ($f in $old) { Update-DesktopConfig $f { param($s) $s.Remove($ServerName) } }
+                Ok 'Removed the old "dayone" entry'
+            } else {
+                Info 'Later, remove the old "dayone" entry: Claude Desktop > Settings > Developer > Edit Config.'
+            }
         }
     } else {
         Info 'Not installed. Run this installer again after installing it.'

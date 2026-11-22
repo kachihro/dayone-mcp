@@ -8,6 +8,10 @@ All notable changes to this project are listed here. Versions follow [semantic v
 - The app icon is now the **kachihro gem** (the same icon as www.kachihro.com), in Claude Desktop, the
   Claude Code plugin, the MCP server and the README.
 
+### Installers
+- Windows: if an early test install left a plain "dayone" entry in Claude Desktop's settings, the
+  installer now removes it once the extension is in, so Day One shows once.
+
 ## [1.0.4] - 22/11/2026
 
 Claude Desktop on Windows now gets Day One as an extension, with its icon and friendlier read-only tool

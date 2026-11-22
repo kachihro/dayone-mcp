@@ -22,7 +22,7 @@
 | Claude Code: `plugin:dayone:dayone` failed in `/mcp` | The first start downloads the server, which can time out on a slow connection. Restart Claude Code. |
 | Claude Code: tools don't appear | Start a **new** session after installing. |
 | Claude Desktop: **Day One** isn't in Settings → Plugins | Run the installer again and click **Install** when Claude Desktop asks. Or double-click `%LOCALAPPDATA%\Programs\dayone-mcp\dayone-mcp.mcpb`. On a Mac, run the installer again and let it restart Claude Desktop. |
-| Claude Desktop: Day One shows twice | Early test versions used Claude Desktop's settings file. Remove the `dayone` entry there: **Settings → Developer → Edit Config**. |
+| Claude Desktop: Day One shows twice | Early test versions used Claude Desktop's settings file. Run the installer again and it removes the old `dayone` entry, or remove it yourself: **Settings → Developer → Edit Config**. |
 | Claude Desktop: "dayone stopped running" | Click **View logs** on the message. Logs are also in `%APPDATA%\Claude\logs` (Windows) or `~/Library/Logs/Claude` (Mac). Please [open an issue](https://github.com/kachihro/dayone-mcp/issues/new/choose) with the last few lines. |
 | Claude Desktop: "`/dayone` isn't installed" | The `/dayone:` commands are Claude Code only. In Claude Desktop, just ask in plain English, e.g. *"When did I go to Hamburg?"* |
 | Search misses things | On Windows and Intel Macs, search matches your words exactly. Try related words, or use `/dayone:search` in Claude Code, which does this for you. |
