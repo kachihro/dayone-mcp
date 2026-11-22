@@ -2,6 +2,15 @@
 
 All notable changes to this project are listed here. Versions follow [semantic versioning](https://semver.org).
 
+## Unreleased
+
+### Installers
+- Claude Desktop: if it's open, the installer and uninstaller offer to close it before saving the
+  setting, because Claude Desktop can otherwise undo the change when it quits. It then checks the
+  setting really saved, and reopens Claude Desktop at the end. Only Claude Desktop is closed, never
+  Claude Code (Windows: Microsoft Store and regular installs; Mac: the Claude app).
+- README: the `/dayone:` commands are Claude Code only; in Claude Desktop, just ask.
+
 ## [1.0.1] - 22/11/2026
 
 Easier, friendlier installers. The MCP server itself is unchanged.

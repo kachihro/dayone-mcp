@@ -212,8 +212,10 @@ delete anything in your journal.
 > 💡 Entries you've just written? Ask Claude to *"sync my journal"* first, or turn on automatic
 > syncing: `dayone sync-schedule enable --interval-minutes 30`.
 
-Using **Claude Desktop** instead? After installing, fully quit and reopen it, then ask the same
-questions in a new chat. **dayone** should be listed in the tools menu of the message box.
+Using **Claude Desktop** instead? The installer closes it while it saves the setting (if it's open,
+Claude Desktop can undo the change) and reopens it at the end. Then just **ask in plain English** in a
+new chat: the `/dayone:` commands are Claude Code only. Check **Settings → Plugins**: **dayone** should
+be listed as a *Local MCP server*.
 
 Prefer to set things up yourself, or using VS Code or another app? Read on.
 
@@ -481,7 +483,8 @@ Using Claude Code? Run **`/dayone:setup`** first. It checks each piece and tells
 | "Could not find the Day One CLI" | Run the installer again. Or tell the server where it is with the `DAYONE_CLI_PATH` environment variable (see below). |
 | Claude Code: `plugin:dayone:dayone` failed in `/mcp` | The first start downloads the server, which can time out on a slow connection. Restart Claude Code. |
 | Claude Code: tools don't appear | Start a **new** session after installing. |
-| Claude Desktop: tools don't appear | Fully quit Claude Desktop and reopen it. Logs: `%APPDATA%\Claude\logs` (Windows), `~/Library/Logs/Claude` (Mac). |
+| Claude Desktop: **dayone** isn't in Settings → Plugins | Run the installer again and let it close Claude Desktop. If Claude Desktop is open while the setting is saved, it can undo the change when it quits. Logs: `%APPDATA%\Claude\logs` (Windows), `~/Library/Logs/Claude` (Mac). |
+| Claude Desktop: "`/dayone` isn't installed" | The `/dayone:` commands are Claude Code only. In Claude Desktop, just ask in plain English, e.g. *"When did I go to Hamburg?"* |
 | Windows SmartScreen warning | The program isn't code-signed yet. Choose **More info → Run anyway**, or [build it yourself](#for-developers). |
 
 <details>

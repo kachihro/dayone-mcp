@@ -114,6 +114,48 @@ function Get-DesktopConfigPath {
     return $null
 }
 
+# Claude Desktop's own processes (Microsoft Store or regular install). Never Claude Code, which is also
+# claude.exe (including the copy inside Claude Desktop's Code tab, under ...\Claude\claude-code\).
+function Get-ClaudeDesktopProcess {
+    return @(Get-Process -Name claude -ErrorAction SilentlyContinue | Where-Object {
+        $_.Path -and $_.Path -match '[\\/](WindowsApps[\\/]Claude_|AnthropicClaude[\\/])' -and $_.Path -notmatch '[\\/]claude-code[\\/]'
+    })
+}
+
+# Claude Desktop rewrites claude_desktop_config.json from memory, so a change made while it's open can be
+# lost. This offers to close it (and waits until it has really gone). Returns $true if it isn't running.
+$script:ClosedDesktop = $false
+function Close-ClaudeDesktop([string] $Why) {
+    $procs = Get-ClaudeDesktopProcess
+    if ($procs.Count -eq 0) { return $true }
+    $codeTab = @(Get-Process -Name claude -ErrorAction SilentlyContinue | Where-Object { $_.Path -match '[\\/]claude-code[\\/]' }).Count -gt 0
+    Warn "Claude Desktop is open, and would undo this when it closes."
+    $q = if ($codeTab) { 'Close Claude Desktop now? (Claude Code sessions in its Code tab close too)' } else { 'Close Claude Desktop now?' }
+    if (-not (Ask $q)) { return $false }
+    foreach ($p in $procs) { try { [void]$p.CloseMainWindow() } catch { } }
+    for ($i = 0; $i -lt 12 -and (Get-ClaudeDesktopProcess).Count -gt 0; $i++) { Start-Sleep -Milliseconds 250 }
+    # Electron apps often just hide in the tray when their window closes, so finish the job.
+    Get-ClaudeDesktopProcess | Stop-Process -Force -ErrorAction SilentlyContinue
+    for ($i = 0; $i -lt 20 -and (Get-ClaudeDesktopProcess).Count -gt 0; $i++) { Start-Sleep -Milliseconds 250 }
+    if ((Get-ClaudeDesktopProcess).Count -gt 0) { Warn "Couldn't close Claude Desktop."; return $false }
+    $script:ClosedDesktop = $true
+    Ok 'Closed Claude Desktop'
+    return $true
+}
+
+# Reopens Claude Desktop through its Start menu entry (works for the Microsoft Store and regular installs).
+function Open-ClaudeDesktop {
+    $app = $null
+    try { $app = Get-StartApps -ErrorAction Stop | Where-Object { $_.Name -eq 'Claude' } | Select-Object -First 1 } catch { }
+    if (-not $app) { return $false }
+    try { Start-Process "shell:AppsFolder\$($app.AppID)"; return $true } catch { return $false }
+}
+
+# True if claude_desktop_config.json has our server pointing at this install.
+function Test-DesktopConfig([string] $Path) {
+    try { return ((Get-Content $Path -Raw | ConvertFrom-Json).mcpServers.$ServerName.command -eq $ExePath) } catch { return $false }
+}
+
 # Reads claude_desktop_config.json, applies $Change to its mcpServers, writes it back (UTF-8, no BOM).
 function Update-DesktopConfig([string] $Path, [scriptblock] $Change) {
     $config = [ordered]@{}
@@ -339,9 +381,11 @@ if ($Uninstall) {
         Ok 'Removed from Claude Code'
     }
     $cfg = Get-DesktopConfigPath
-    if ($cfg -and (Test-Path $cfg)) {
+    if ($cfg -and (Test-Path $cfg) -and (Select-String -Path $cfg -Pattern "`"$ServerName`"" -Quiet)) {
+        $closed = Close-ClaudeDesktop
         Update-DesktopConfig $cfg { param($s) $s.Remove($ServerName) }
         Ok 'Removed from Claude Desktop'
+        if (-not $closed) { Warn 'Quit Claude Desktop fully (tray icon > Quit), then run uninstall again to be sure.' }
     }
     if (Test-Path $InstallDir) {
         Get-Process DayOneMcp -ErrorAction SilentlyContinue |
@@ -380,7 +424,8 @@ if ($Uninstall) {
     Write-Host ''
     if ($Fancy) { Write-Host "$($Icon.ok) Uninstalled." -ForegroundColor Green } else { Write-Host '  Uninstalled.' -ForegroundColor Green }
     $arrow = if ($Fancy) { "   $($Icon.arrow)" } else { '    -' }
-    Write-Host "$arrow Restart Claude Desktop and Claude Code to finish."
+    if ($script:ClosedDesktop -and (Open-ClaudeDesktop)) { Write-Host "$arrow Reopened Claude Desktop. Restart Claude Code to finish." }
+    else { Write-Host "$arrow Restart Claude Desktop and Claude Code to finish." }
     Write-Host "$arrow To start again: irm https://raw.githubusercontent.com/$Repo/main/install.ps1 | iex"
     Write-Host ''
     return
@@ -506,9 +551,15 @@ if (-not $SkipClaudeDesktop) {
     Step desktop 'Claude Desktop'
     $cfg = Get-DesktopConfigPath
     if ($cfg) {
+        $closed = Close-ClaudeDesktop
         Update-DesktopConfig $cfg { param($s) $s[$ServerName] = [ordered]@{ command = $ExePath; args = @() } }
-        Ok 'Connected'
-        $registered += 'Claude Desktop'
+        if (Test-DesktopConfig $cfg) {
+            Ok 'Connected'
+            $registered += 'Claude Desktop'
+            if (-not $closed) { $script:DesktopStillOpen = $true }
+        } else {
+            Warn "Couldn't save the Claude Desktop setting. Quit Claude Desktop and run this installer again."
+        }
     } else {
         Info 'Not installed. Run this installer again after installing it.'
     }
@@ -522,7 +573,11 @@ $journals = Invoke-PersonalSetup $dayoneExe
 Write-Host ''
 if ($Fancy) { Write-Host "$($Icon.party) All done!" -ForegroundColor Green } else { Write-Host '  All done!' -ForegroundColor Green }
 $arrow = if ($Fancy) { "   $($Icon.arrow)" } else { '    -' }
-if ($registered -contains 'Claude Desktop') { Write-Host "$arrow Claude Desktop: quit it fully (tray icon > Quit), then reopen" }
+if ($registered -contains 'Claude Desktop') {
+    if ($script:DesktopStillOpen) { Write-Host "$arrow Claude Desktop: quit it fully (tray icon > Quit), then run this installer again" }
+    elseif ($script:ClosedDesktop -and (Open-ClaudeDesktop)) { Write-Host "$arrow Claude Desktop: reopened. Start a new chat and ask about your journal" }
+    else { Write-Host "$arrow Claude Desktop: open it and start a new chat" }
+}
 if ($registered -contains 'Claude Code')    { Write-Host "$arrow Claude Code: start a new session and try /dayone:on-this-day" }
 if ($journals -eq 0) { Write-Host "$arrow Later: sign in or add your key with configure.ps1 (see the README)" }
 Write-Host ''

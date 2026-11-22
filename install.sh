@@ -166,6 +166,37 @@ format_journals() {
     return label + ": " + names.slice(0, 4).join(", ") + (names.length > 4 ? ", ..." : "");'
 }
 
+# Claude Desktop rewrites claude_desktop_config.json from memory, so a change made while it's open can be
+# lost. On a Mac it's the "Claude" app (Claude Code's process is lowercase "claude", so it's never matched).
+DESKTOP_PROC="${DAYONE_MCP_TEST_DESKTOP_PROC:-}"   # for testing on Linux
+[ "$OS" = "Darwin" ] && [ -z "$DESKTOP_PROC" ] && DESKTOP_PROC="Claude"
+CLOSED_DESKTOP=0; DESKTOP_STILL_OPEN=0
+desktop_running() { [ -n "$DESKTOP_PROC" ] && pgrep -x "$DESKTOP_PROC" >/dev/null 2>&1; }
+close_desktop() { # returns 0 if Claude Desktop isn't running (any more)
+  desktop_running || return 0
+  warn "Claude Desktop is open, and would undo this when it quits."
+  ask "Quit Claude Desktop now? (Claude Code sessions in its Code tab close too)" || return 1
+  if [ "$OS" = "Darwin" ]; then osascript -e 'tell application "Claude" to quit' >/dev/null 2>&1 || true; fi
+  local i=0
+  while desktop_running && [ $i -lt 20 ]; do sleep 0.5; i=$((i + 1)); done
+  desktop_running && pkill -x "$DESKTOP_PROC" >/dev/null 2>&1
+  i=0; while desktop_running && [ $i -lt 20 ]; do sleep 0.25; i=$((i + 1)); done
+  if desktop_running; then warn "Couldn't quit Claude Desktop."; return 1; fi
+  CLOSED_DESKTOP=1; ok "Quit Claude Desktop"
+  return 0
+}
+open_desktop() {
+  if [ -n "${DAYONE_MCP_TEST_DESKTOP_PROC:-}" ]; then printf '      [test: open -a Claude]\n'; return 0; fi
+  [ "$OS" = "Darwin" ] && open -a Claude >/dev/null 2>&1
+}
+# True if claude_desktop_config.json has our server pointing at this install.
+desktop_config_ok() {
+  CFG="$DESKTOP_CFG" NAME="$SERVER_NAME" CMD="$EXE" node -e '
+    try { const c = JSON.parse(require("fs").readFileSync(process.env.CFG, "utf8"));
+          process.exit(c.mcpServers && c.mcpServers[process.env.NAME] && c.mcpServers[process.env.NAME].command === process.env.CMD ? 0 : 1); }
+    catch { process.exit(1); }' 2>/dev/null
+}
+
 # Edits mcpServers in claude_desktop_config.json.
 desktop_config() { # $1 = add|remove
   [ -d "$(dirname "$DESKTOP_CFG")" ] || return 1
@@ -349,7 +380,11 @@ if [ "$UNINSTALL" = 1 ]; then
     quiet claude mcp remove --scope user "$SERVER_NAME" || true
     ok "Removed from Claude Code"
   fi
-  if [ -f "$DESKTOP_CFG" ] && command -v node >/dev/null 2>&1; then desktop_config remove && ok "Removed from Claude Desktop"; fi
+  if [ -f "$DESKTOP_CFG" ] && command -v node >/dev/null 2>&1 && grep -q "\"$SERVER_NAME\"" "$DESKTOP_CFG"; then
+    if close_desktop; then :; else DESKTOP_STILL_OPEN=1; fi
+    desktop_config remove && ok "Removed from Claude Desktop"
+    [ $DESKTOP_STILL_OPEN = 1 ] && warn "Quit Claude Desktop fully (Cmd+Q), then run uninstall again to be sure."
+  fi
   if [ -d "$INSTALL_DIR" ]; then rm -rf "$INSTALL_DIR"; ok "Removed the server"; fi
 
   # Optionally go back to a clean slate: sign out, remove the Day One CLI and what it downloaded.
@@ -381,7 +416,8 @@ if [ "$UNINSTALL" = 1 ]; then
 
   echo
   if [ "$FANCY" = 1 ]; then printf '%s ' "$(icon ok)"; col 32 "Uninstalled."; echo; else col 32 "  Uninstalled."; echo; fi
-  done_line "Restart Claude Desktop and Claude Code to finish."
+  if [ $CLOSED_DESKTOP = 1 ]; then open_desktop; done_line "Reopened Claude Desktop. Restart Claude Code to finish."
+  else done_line "Restart Claude Desktop and Claude Code to finish."; fi
   done_line "To start again: curl -fsSL https://raw.githubusercontent.com/$REPO/main/install.sh | bash"
   echo
   exit 0
@@ -476,7 +512,11 @@ fi
 
 if [ "$SKIP_DESKTOP" = 0 ]; then
   step desktop "Claude Desktop"
-  if desktop_config add; then ok "Connected"; REGISTERED="$REGISTERED desktop"
+  if [ -d "$(dirname "$DESKTOP_CFG")" ]; then
+    if close_desktop; then :; else DESKTOP_STILL_OPEN=1; fi
+    desktop_config add || true
+    if desktop_config_ok; then ok "Connected"; REGISTERED="$REGISTERED desktop"
+    else warn "Couldn't save the Claude Desktop setting. Quit Claude Desktop and run this installer again."; fi
   else info "Not installed. Run this installer again after installing it."; fi
 fi
 
@@ -486,7 +526,11 @@ personal_setup
 
 echo
 if [ "$FANCY" = 1 ]; then printf '%s ' "$(icon party)"; col 32 "All done!"; echo; else col 32 "  All done!"; echo; fi
-case "$REGISTERED" in *desktop*) done_line "Claude Desktop: quit it fully (Cmd+Q), then reopen" ;; esac
+case "$REGISTERED" in *desktop*)
+  if [ $DESKTOP_STILL_OPEN = 1 ]; then done_line "Claude Desktop: quit it fully (Cmd+Q), then run this installer again"
+  elif [ $CLOSED_DESKTOP = 1 ]; then open_desktop; done_line "Claude Desktop: reopened. Start a new chat and ask about your journal"
+  else done_line "Claude Desktop: open it and start a new chat"; fi ;;
+esac
 case "$REGISTERED" in *code*) done_line "Claude Code: start a new session and try /dayone:on-this-day" ;; esac
 [ -z "$JOURNALS_LINE" ] && done_line "Later: sign in or add your key with configure.sh (see the README)"
 if [ "$OS" = "Darwin" ]; then info "Tip: Day One for Mac also has its own MCP server (Settings > Labs)."; fi
