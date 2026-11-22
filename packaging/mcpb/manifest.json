@@ -1,7 +1,7 @@
 {
   "manifest_version": "0.3",
   "name": "dayone-mcp",
-  "display_name": "Day One Journal",
+  "display_name": "Day One Journal by kachihro",
   "version": "0.0.0",
   "description": "Search your Day One journal: keyword search, On This Day, browse and read entries.",
   "long_description": "Lets Claude search and read your Day One journal on Windows, using the official Day One CLI (@dayone/cli). Read-only: Claude cannot create, change or delete entries.\n\n**Before installing:** install Node.js LTS, then run `npm install -g @dayone/cli`, `dayone setup` and `dayone sync` in PowerShell (or use the one-line installer from the GitHub page, which does all of this).",

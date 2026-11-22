@@ -4,6 +4,12 @@ All notable changes to this project are listed here. Versions follow [semantic v
 
 ## Unreleased
 
+### Branding
+- New app icon: a journal with a ribbon bookmark and the kachihro gem, on the kachihro gradient.
+- The MCP server now sends a title ("Day One Journal by kachihro"), a description, a website link
+  and the icon in its `serverInfo`, so MCP apps that show server icons pick it up.
+- Plugin, marketplace and Claude Desktop extension names and descriptions mention kachihro.
+
 ### Installers
 - Claude Desktop: if it's open, the installer and uninstaller offer to close it before saving the
   setting, because Claude Desktop can otherwise undo the change when it quits. It then checks the

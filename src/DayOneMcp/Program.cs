@@ -46,10 +46,36 @@ builder.Services.AddSingleton<DayOneCli>();
 builder.Services
     .AddMcpServer(o =>
     {
-        o.ServerInfo = new() { Name = "dayone", Version = version };
+        o.ServerInfo = new()
+        {
+            Name = "dayone",
+            Title = "Day One Journal by kachihro",
+            Version = version,
+            Description = "Search and read your Day One journal. Read-only. Made by kachihro (www.kachihro.com).",
+            WebsiteUrl = "https://github.com/kachihro/dayone-mcp",
+            Icons = LoadIcon(),
+        };
     })
     .WithStdioServerTransport()
     .WithTools<DayOneTools>();
 
 await builder.Build().RunAsync();
 return 0;
+
+// The app icon, embedded in the executable and sent as a data URI so it works offline.
+static List<ModelContextProtocol.Protocol.Icon>? LoadIcon()
+{
+    using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("DayOneMcp.icon.png");
+    if (stream is null) return null;
+    using var ms = new MemoryStream();
+    stream.CopyTo(ms);
+    return
+    [
+        new()
+        {
+            Source = "data:image/png;base64," + Convert.ToBase64String(ms.ToArray()),
+            MimeType = "image/png",
+            Sizes = ["128x128"],
+        },
+    ];
+}
