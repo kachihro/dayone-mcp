@@ -2,7 +2,9 @@
 
 All notable changes to this project are listed here. Versions follow [semantic versioning](https://semver.org).
 
-## Unreleased
+## [1.0.3] - 22/11/2026
+
+Works with nvm, and smoother updates and Claude Desktop restarts on Windows.
 
 ### Installers
 - Works with **nvm** (Node Version Manager): nvm keeps separate global npm packages for each Node
@@ -11,6 +13,8 @@ All notable changes to this project are listed here. Versions follow [semantic v
 - Windows: updating no longer fails with "the process cannot access the file" when Claude Desktop is
   running Day One MCP. The running copy is renamed aside (Windows allows that) and the new one put in
   place; Claude Desktop picks it up when it restarts. Old copies are cleaned up on the next run.
+- Friendlier Claude Desktop prompt: "Claude Desktop needs a quick restart to connect Day One. Restart
+  it now? It reopens when this finishes."
 
 ### MCP server
 - Also searches nvm's Node version folders for the Day One CLI (Windows: `C:\nvm4w`, `%LOCALAPPDATA%\nvm`,
