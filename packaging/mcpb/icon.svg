@@ -1,39 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <title>Day One Journal for Claude, by Kachihro</title>
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#2B88D8"/>
-      <stop offset="0.55" stop-color="#7A3FE5"/>
-      <stop offset="1" stop-color="#142E86"/>
-    </linearGradient>
-    <linearGradient id="cover" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#FFFFFF"/>
-      <stop offset="1" stop-color="#EEF2FC"/>
-    </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#0A0D16" flood-opacity="0.35"/>
-    </filter>
-  </defs>
-
-  <!-- Background tile in the Kachihro gradient -->
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-
-  <!-- Journal: page block behind, then the cover -->
-  <g filter="url(#shadow)">
-    <rect x="150" y="112" width="236" height="304" rx="26" fill="#C9D4F0"/>
-    <rect x="132" y="96" width="236" height="304" rx="26" fill="url(#cover)"/>
-  </g>
-  <!-- Spine band -->
-  <path d="M158 96 H180 V400 H158 A26 26 0 0 1 132 374 V122 A26 26 0 0 1 158 96 Z" fill="#DCE5FA"/>
-  <line x1="180" y1="96" x2="180" y2="400" stroke="#C9D4F0" stroke-width="3"/>
-
-  <!-- Ribbon bookmark -->
-  <path d="M318 96 H350 V196 L334 182 L318 196 Z" fill="#A586F0"/>
-
-  <!-- Kachihro gem on the cover -->
-  <g transform="translate(204 206) scale(3.3)">
-    <polygon points="20,4 4,16 36,16" fill="#2B88D8"/>
-    <polygon points="4,16 20,16 20,37" fill="#7A3FE5"/>
-    <polygon points="20,16 36,16 20,37" fill="#142E86"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 40 40">
+  <title>Day One Journal by kachihro</title>
+  <!-- The kachihro gem (same as www.kachihro.com's icon) -->
+  <rect width="40" height="40" rx="9" fill="#ffffff"/>
+  <polygon points="20,4 4,16 36,16" fill="#2B88D8"/>
+  <polygon points="4,16 20,16 20,37" fill="#7A3FE5"/>
+  <polygon points="20,16 36,16 20,37" fill="#142E86"/>
 </svg>

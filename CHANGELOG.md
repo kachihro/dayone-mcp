@@ -2,6 +2,12 @@
 
 All notable changes to this project are listed here. Versions follow [semantic versioning](https://semver.org).
 
+## [1.0.5] - 22/11/2026
+
+### Branding
+- The app icon is now the **kachihro gem** (the same icon as www.kachihro.com), in Claude Desktop, the
+  Claude Code plugin, the MCP server and the README.
+
 ## [1.0.4] - 22/11/2026
 
 Claude Desktop on Windows now gets Day One as an extension, with its icon and friendlier read-only tool
