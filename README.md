@@ -24,13 +24,16 @@ Ask things like:
 - *"When did I last mention Mum's birthday?"*
 - *"Reflect on my journal from last month."*
 
+> 🔒 **Read-only, by design.** Day One MCP can **search and read** your journal, but it can't create,
+> change or delete anything. Your journal stays exactly as you wrote it.
+
 **How it works, in one line:** [MCP](https://modelcontextprotocol.io) is the standard way AI apps
 connect to tools. This project is an MCP tool that reads your journal through the
 [Day One CLI](https://github.com/Automattic/DayOne-Cli), Day One's official command-line program.
-It's **read-only** (it can't change or delete anything) and runs **on your own computer**.
+Everything runs **on your own computer**.
 
-> **On a Mac?** Day One has its own built-in MCP server (Preferences → Labs), which you may prefer.
-> Use this project if you're on Windows or Linux, or want the Claude Code commands below.
+> **On a Mac?** Day One also has its own built-in option. See [Other options](#other-options) to pick
+> the right one for you.
 
 ---
 
@@ -509,6 +512,27 @@ Still stuck? [Open an issue](https://github.com/kachihro/dayone-mcp/issues/new/c
 don't include journal text or passwords.
 
 ---
+
+## Other options
+
+Day One MCP is one way to use your journal with AI. Day One also offers:
+
+- **Day One's built-in MCP server (Mac only).** Built into Day One for Mac: turn it on in **Preferences →
+  Labs → MCP Access Control** (Silver or Gold plan). It can also **create and update** entries.
+  See Day One's guide: [Day One MCP Server](https://dayoneapp.com/guides/day-one-for-mac/day-one-mcp-server/).
+- **The Day One CLI on its own.** Day One's official
+  [command-line tool](https://github.com/Automattic/DayOne-Cli) works in a terminal on Windows, Mac and
+  Linux, and Claude Code can run it directly. It can also write entries.
+
+**Which should I use?**
+
+| You want | Best fit |
+|---|---|
+| Windows or Linux | **Day One MCP** |
+| `/dayone:` commands in Claude Code | **Day One MCP** |
+| VS Code (GitHub Copilot), Cursor or another MCP app | **Day One MCP** |
+| Read-only, so nothing in your journal can change | **Day One MCP** |
+| Claude to create or edit entries, on a Mac | Day One's built-in MCP server |
 
 ## For developers
 
