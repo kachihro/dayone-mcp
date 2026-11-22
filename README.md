@@ -32,8 +32,8 @@ connect to tools. This project is an MCP tool that reads your journal through th
 [Day One CLI](https://github.com/Automattic/DayOne-Cli), Day One's official command-line program.
 Everything runs **on your own computer**.
 
-> **On a Mac?** Day One also has its own built-in option. See [Other options](#other-options) to pick
-> the right one for you.
+> **On a Mac?** Day One also has its own [built-in MCP server](https://dayoneapp.com/guides/day-one-for-mac/day-one-mcp-server/).
+> See [Other options](#other-options) to pick the right one for you.
 
 ---
 
