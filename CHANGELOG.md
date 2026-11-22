@@ -2,7 +2,9 @@
 
 All notable changes to this project are listed here. Versions follow [semantic versioning](https://semver.org).
 
-## Unreleased
+## [1.0.1] - 22/11/2026
+
+Easier, friendlier installers. The MCP server itself is unchanged.
 
 ### Installers
 - macOS/Linux installer brought up to date with Windows: two parts, `configure.sh` and
