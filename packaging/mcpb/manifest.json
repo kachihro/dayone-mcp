@@ -3,8 +3,8 @@
   "name": "dayone-mcp",
   "display_name": "Day One Journal by kachihro",
   "version": "0.0.0",
-  "description": "Search your Day One journal: keyword search, On This Day, browse and read entries.",
-  "long_description": "Lets Claude search and read your Day One journal on Windows, using the official Day One CLI (@dayone/cli). Read-only: Claude cannot create, change or delete entries.\n\n**Before installing:** install Node.js LTS, then run `npm install -g @dayone/cli`, `dayone setup` and `dayone sync` in PowerShell (or use the one-line installer from the GitHub page, which does all of this).",
+  "description": "Search and read your Day One journal with Claude. Read-only: Claude can't change anything.",
+  "long_description": "Ask Claude about your Day One journal: search, On This Day, browse and read entries.\n\n**Read-only.** Claude can search and read your entries, but can't create, change or delete anything. Everything runs on your computer, using Day One's official CLI.\n\n**Setup:** the one-line installer from the GitHub page installs Node.js and the Day One CLI if needed, signs you in and installs this extension.",
   "author": {
     "name": "kachihro",
     "url": "https://www.kachihro.com"
@@ -47,27 +47,27 @@
   "tools": [
     {
       "name": "search_entries",
-      "description": "Keyword search with date, journal, tag, starred and media filters"
+      "description": "Search your journal by words, dates, journal, tags or starred (read-only)"
     },
     {
       "name": "on_this_day",
-      "description": "Entries from this day in previous years"
+      "description": "Entries from this day in previous years (read-only)"
     },
     {
       "name": "list_journals",
-      "description": "List your journals"
+      "description": "List your journals (read-only)"
     },
     {
       "name": "list_entries",
-      "description": "Browse entries in a journal"
+      "description": "Browse a journal (read-only)"
     },
     {
       "name": "read_entry",
-      "description": "Read one entry in full"
+      "description": "Read one entry in full (read-only)"
     },
     {
       "name": "sync_journals",
-      "description": "Download the latest entries from Day One"
+      "description": "Get your latest entries from Day One (read-only)"
     }
   ],
   "compatibility": {

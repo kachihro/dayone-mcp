@@ -24,19 +24,20 @@ public sealed class DayOneTools(DayOneCli cli)
         Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
     };
 
-    [McpServerTool(Name = "list_journals", Title = "List Day One journals", ReadOnly = true, Idempotent = true, Destructive = false, OpenWorld = false)]
-    [Description("Lists the user's Day One journals with their IDs and names. Use the IDs to filter other tools.")]
+    [McpServerTool(Name = "list_journals", Title = "List your journals", ReadOnly = true, Idempotent = true, Destructive = false, OpenWorld = false)]
+    [Description("Lists your Day One journals (names and IDs). Read-only. Use the IDs to filter the other tools.")]
     public async Task<string> ListJournals(CancellationToken ct)
     {
         var json = await cli.RunJsonAsync(["list", "journals"], ct);
         return Shrink(json);
     }
 
-    [McpServerTool(Name = "search_entries", Title = "Search Day One entries", ReadOnly = true, Idempotent = true, Destructive = false, OpenWorld = false)]
+    [McpServerTool(Name = "search_entries", Title = "Search your journal", ReadOnly = true, Idempotent = true, Destructive = false, OpenWorld = false)]
     [Description("""
-        Searches Day One journal entries. On Windows this is keyword search, so if nothing is found
-        try synonyms or related words. Leave 'query' empty to list entries matching only the filters
-        (for example a date range). Dates are interpreted in the user's local time zone.
+        Searches your Day One entries by words, dates, journal, tags, starred or media. Read-only.
+        On Windows and Intel Macs this is keyword search, so if nothing is found, try related words.
+        Leave 'query' empty to list entries matching only the filters (for example a date range).
+        Dates use the local time zone.
         """)]
     public async Task<string> SearchEntries(
         [Description("Words to search for. Optional; leave empty to match every entry in the filters.")] string? query = null,
@@ -66,7 +67,7 @@ public sealed class DayOneTools(DayOneCli cli)
     }
 
     [McpServerTool(Name = "on_this_day", Title = "On This Day", ReadOnly = true, Idempotent = true, Destructive = false, OpenWorld = false)]
-    [Description("Finds entries written on a given day of the year (default: today) in previous years, like Day One's 'On This Day'.")]
+    [Description("Shows entries written on this day (or any day) in previous years, like Day One's On This Day. Read-only.")]
     public async Task<string> OnThisDay(
         [Description("Day of the year as MM-DD, e.g. 11-23. Defaults to today.")] string? monthDay = null,
         [Description("How many past years to check (1-50, default 20).")] int yearsBack = 20,
@@ -119,8 +120,8 @@ public sealed class DayOneTools(DayOneCli cli)
         return Shrink(result);
     }
 
-    [McpServerTool(Name = "list_entries", Title = "List entries in a journal", ReadOnly = true, Idempotent = true, Destructive = false, OpenWorld = false)]
-    [Description("Lists entries in one journal, newest first by default. Use 'cursor' from a previous result to get the next page.")]
+    [McpServerTool(Name = "list_entries", Title = "Browse a journal", ReadOnly = true, Idempotent = true, Destructive = false, OpenWorld = false)]
+    [Description("Lists the entries in one journal, newest first. Read-only. Use 'cursor' from a previous result to get the next page.")]
     public async Task<string> ListEntries(
         [Description("Journal ID (from list_journals).")] string journalId,
         [Description("Maximum number of entries (1-50, default 10).")] int limit = 10,
@@ -142,8 +143,8 @@ public sealed class DayOneTools(DayOneCli cli)
         return Shrink(await cli.RunJsonAsync(args, ct));
     }
 
-    [McpServerTool(Name = "read_entry", Title = "Read a Day One entry", ReadOnly = true, Idempotent = true, Destructive = false, OpenWorld = false)]
-    [Description("Reads one entry in full. Use this when a search result was shortened.")]
+    [McpServerTool(Name = "read_entry", Title = "Read an entry", ReadOnly = true, Idempotent = true, Destructive = false, OpenWorld = false)]
+    [Description("Reads one entry in full. Read-only. Use this when a search result was shortened.")]
     public async Task<string> ReadEntry(
         [Description("Journal ID of the entry.")] string journalId,
         [Description("Entry ID.")] string entryId,
@@ -153,8 +154,9 @@ public sealed class DayOneTools(DayOneCli cli)
         return Shrink(json, shortenLongText: false);
     }
 
-    [McpServerTool(Name = "sync_journals", Title = "Refresh from Day One", ReadOnly = false, Idempotent = true, Destructive = false, OpenWorld = true)]
-    [Description("Downloads the latest entries from the user's Day One account to the local copy that searches use. Run this if recent entries are missing.")]
+    // Marked read-only: it only downloads into the local copy that searches use, and never changes the journal.
+    [McpServerTool(Name = "sync_journals", Title = "Get your latest entries", ReadOnly = true, Idempotent = true, Destructive = false, OpenWorld = true)]
+    [Description("Downloads your latest entries from Day One, so searches include recent ones. Read-only: it never changes your journal. Use it if recent entries are missing.")]
     public async Task<string> SyncJournals(CancellationToken ct)
     {
         var output = await cli.RunTextAsync(["sync"], TimeSpan.FromMinutes(10), ct);

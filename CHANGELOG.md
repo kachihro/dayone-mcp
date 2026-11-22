@@ -29,6 +29,10 @@ and a new, easier README.
   it now? It reopens when this finishes."
 
 ### MCP server
+- Friendlier, clearer tool names and descriptions in Claude Desktop's tool permissions ("Search your
+  journal", "Read an entry"...), each saying it's read-only. "Get your latest entries" (sync) is now
+  marked read-only too, since it only downloads and never changes your journal, so all six tools sit
+  together under **Read-only tools**.
 - Also reads the Day One CLI location saved by the installer when it runs from somewhere else (the
   Claude Desktop extension or the Claude Code plugin), so nvm setups work there too.
 - Also searches nvm's Node version folders for the Day One CLI (Windows: `C:\nvm4w`, `%LOCALAPPDATA%\nvm`,

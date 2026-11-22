@@ -169,7 +169,8 @@ and verifies the download. Update it with `claude plugin update dayone@dayone-mc
 
 ## The tools the AI can use
 
-All read-only, apart from `sync_journals`, which only downloads your latest entries from Day One.
+All read-only: none of them can change your journal. `sync_journals` only downloads your latest entries
+from Day One.
 
 | Tool | What it does |
 |---|---|

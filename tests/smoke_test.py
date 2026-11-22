@@ -50,8 +50,8 @@ rpc("notifications/initialized", notify=True)
 tools = {t["name"]: t for t in rpc("tools/list")["result"]["tools"]}
 expected = {"list_journals", "search_entries", "on_this_day", "list_entries", "read_entry", "sync_journals"}
 check("tools/list has all tools", set(tools) == expected, str(sorted(tools)))
-check("search tools are read-only",
-      all(tools[t]["annotations"]["readOnlyHint"] for t in expected - {"sync_journals"}))
+check("every tool is read-only", all(tools[t]["annotations"]["readOnlyHint"] for t in expected))
+check("no tool is destructive", not any(tools[t]["annotations"].get("destructiveHint") for t in expected))
 
 err, text = call("list_journals", {})
 check("list_journals", not err and json.loads(text)["ok"], text)
