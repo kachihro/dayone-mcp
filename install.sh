@@ -67,7 +67,7 @@ icon() { # emoji for a name; plain-text fallback when FANCY=0
       book) printf '📔' ;; plus) printf '➕' ;; person) printf '👤' ;; node) printf '📦' ;;
       rocket) printf '🚀' ;; bolt) printf '⚡️' ;; desktop) printf '💻' ;; key) printf '🔐' ;;
       keyhole) printf '🔑' ;; broom) printf '🧹' ;; ok) printf '✅' ;; warn) printf '❗' ;;
-      party) printf '🎉' ;; arrow) printf '👉' ;; coffee) printf '☕️' ;; heart) printf '💜' ;;
+      party) printf '🎉' ;; arrow) printf '👉' ;; heart) printf '💜' ;;
     esac
   fi
 }
@@ -84,6 +84,11 @@ step() { echo; if [ "$FANCY" = 1 ]; then printf '%s ' "$(icon "$1")"; col 36 "$2
 ok()   { if [ "$FANCY" = 1 ]; then printf '   %s ' "$(icon ok)"; col 32 "$1"; echo; else col 32 "    [ok] $1"; echo; fi; }
 warn() { if [ "$FANCY" = 1 ]; then printf '   %s ' "$(icon warn)"; col 33 "$1"; echo; else col 33 "    [!] $1"; echo; fi; }
 info() { printf '    %s\n' "$1"; }
+# A clickable link (OSC 8 terminal hyperlink) in terminals that support it; just the text elsewhere.
+# The text is the full https:// address, so terminals without OSC 8 can still detect it as a link.
+link() { # url [text]
+  if [ "$FANCY" = 1 ]; then printf '\033]8;;%s\033\\%s\033]8;;\033\\' "$1" "${2:-$1}"; else printf '%s' "${2:-$1}"; fi
+}
 done_line() { if [ "$FANCY" = 1 ]; then printf '   %s %s\n' "$(icon arrow)" "$1"; else printf '    - %s\n' "$1"; fi; }
 
 # ------------------------------------------------------------------------------------------------ input
@@ -486,5 +491,5 @@ case "$REGISTERED" in *code*) done_line "Claude Code: start a new session and tr
 [ -z "$JOURNALS_LINE" ] && done_line "Later: sign in or add your key with configure.sh (see the README)"
 if [ "$OS" = "Darwin" ]; then info "Tip: Day One for Mac also has its own MCP server (Settings > Labs)."; fi
 echo
-if [ "$FANCY" = 1 ]; then printf '   %s \033[90mEnjoying it? ko-fi.com/kachihro\033[0m\n' "$(icon coffee)"; fi
+if [ "$FANCY" = 1 ]; then printf '   %s \033[90mEnjoying it? Buy me a coffee: %s\033[0m\n' "$(icon heart)" "$(link https://ko-fi.com/kachihro)"; fi
 echo

@@ -12,6 +12,8 @@ All notable changes to this project are listed here. Versions follow [semantic v
 - Live sync progress on both platforms: a spinner with the journal number and entry count, then
   "Synced 1,480 entries".
 - README: new "Using it in Claude Code" section.
+- The closing "Buy me a coffee" line uses 💜 and a clickable link (OSC 8 terminal hyperlink, with the
+  full https:// address as text so other terminals can still detect it).
 
 ### Windows installer
 - Easier Day One sign-in: the password and encryption key prompts show `*` and accept pasting, and

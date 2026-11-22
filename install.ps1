@@ -53,12 +53,19 @@ $Fancy = [bool]($env:WT_SESSION -or $env:TERM_PROGRAM -eq 'vscode' -or $PSVersio
 function U([int[]] $CodePoints) { -join ($CodePoints | ForEach-Object { [char]::ConvertFromUtf32($_) }) }
 $Icon = @{
     book = U 0x1F4D4; node = U 0x1F4E6; key = U 0x1F510; rocket = U 0x1F680; bolt = U 0x26A1, 0xFE0F
-    desktop = U 0x1F4BB; ok = U 0x2705; warn = U 0x2757; party = U 0x1F389; coffee = U 0x2615, 0xFE0F
+    desktop = U 0x1F4BB; ok = U 0x2705; warn = U 0x2757; party = U 0x1F389
     broom = U 0x1F9F9; heart = U 0x1F49C; arrow = U 0x1F449; keyhole = U 0x1F511; plus = U 0x2795; person = U 0x1F464
 }
 
 function Step($iconName, $t) { Write-Host ''; if ($Fancy) { Write-Host "$($Icon[$iconName]) $t" -ForegroundColor Cyan } else { Write-Host "==> $t" -ForegroundColor Cyan } }
 function Ok($t)    { if ($Fancy) { Write-Host "   $($Icon.ok) $t" -ForegroundColor Green } else { Write-Host "    [ok] $t" -ForegroundColor Green } }
+# A clickable link (OSC 8 terminal hyperlink) in terminals that support it; just the text elsewhere.
+# The text is the full https:// address, so terminals without OSC 8 can still detect it as a link.
+function Link([string] $Url, [string] $Text = $Url) {
+    if (-not $Fancy) { return $Text }
+    $e = [string][char]27
+    return "$e]8;;$Url$e\$Text$e]8;;$e\"
+}
 function Info($t)  { Write-Host "    $t" -ForegroundColor Gray }
 function Warn($t)  { if ($Fancy) { Write-Host "   $($Icon.warn) $t" -ForegroundColor Yellow } else { Write-Host "    [!] $t" -ForegroundColor Yellow } }
 function Ask($q) {
@@ -519,5 +526,5 @@ if ($registered -contains 'Claude Desktop') { Write-Host "$arrow Claude Desktop:
 if ($registered -contains 'Claude Code')    { Write-Host "$arrow Claude Code: start a new session and try /dayone:on-this-day" }
 if ($journals -eq 0) { Write-Host "$arrow Later: sign in or add your key with configure.ps1 (see the README)" }
 Write-Host ''
-if ($Fancy) { Write-Host "   $($Icon.coffee) Enjoying it? ko-fi.com/kachihro" -ForegroundColor DarkGray }
+if ($Fancy) { Write-Host "   $($Icon.heart) Enjoying it? Buy me a coffee: $(Link 'https://ko-fi.com/kachihro')" -ForegroundColor DarkGray }
 Write-Host ''
