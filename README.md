@@ -311,6 +311,7 @@ Day One MCP is one way to use your journal with AI. Day One also offers:
 
 - 🛠️ **[Manual setup](docs/manual-setup.md):** set things up by hand, or connect VS Code, Cursor and other apps.
 - 🩺 **[Troubleshooting](docs/troubleshooting.md):** fixes for every message you might see.
+- 💬 **[Day One forum post](https://forums.dayoneapp.com/forums/topic/day-one-mcp-server-for-windows-search-journals-from-claude-code-open-source/):** questions, ideas and feedback (would you like Claude to add entries?).
 - 👩‍💻 **For developers:** C# / .NET 10 on the official [MCP C# SDK](https://github.com/modelcontextprotocol/csharp-sdk).
   Building, testing and releasing are in [CONTRIBUTING.md](CONTRIBUTING.md). Contributions are very welcome! 💛
 
