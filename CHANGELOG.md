@@ -10,6 +10,9 @@ All notable changes to this project are listed here. Versions follow [semantic v
   setting really saved, and reopens Claude Desktop at the end. Only Claude Desktop is closed, never
   Claude Code (Windows: Microsoft Store and regular installs; Mac: the Claude app).
 - README: the `/dayone:` commands are Claude Code only; in Claude Desktop, just ask.
+- Checks for Node.js 18 or newer (the Claude Code plugin needs it) and offers to install the current
+  LTS (winget on Windows, Homebrew on Mac). Older versions still work for Claude Desktop.
+- Headings are yellow instead of purple, so they're easier to read.
 
 ## [1.0.1] - 22/11/2026
 

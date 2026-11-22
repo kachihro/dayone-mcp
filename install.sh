@@ -75,9 +75,9 @@ part() { # icon, title
   echo
   if [ "$FANCY" = 1 ]; then
     local n=$((52 - ${#2})); [ $n -lt 4 ] && n=4
-    printf '%s ' "$(icon "$1")"; col 35 "$2"; printf ' \033[90m%s\033[0m\n' "$(printf '%*s' "$n" '' | sed 's/ /─/g')"
+    printf '%s ' "$(icon "$1")"; col 93 "$2"; printf ' \033[90m%s\033[0m\n' "$(printf '%*s' "$n" '' | sed 's/ /─/g')"
   else
-    col 35 "== $2 =="; echo
+    col 93 "== $2 =="; echo
   fi
 }
 step() { echo; if [ "$FANCY" = 1 ]; then printf '%s ' "$(icon "$1")"; col 36 "$2"; echo; else col 36 "==> $2"; echo; fi; }
@@ -366,8 +366,8 @@ personal_setup() {
 
 # ------------------------------------------------------------------------------------------------ start
 echo
-if [ "$FANCY" = 1 ]; then printf '  %s ' "$(icon book)"; col 35 "Day One MCP"; printf '  \033[90mby kachihro %s\033[0m\n' "$(icon heart)"
-else col 35 "  Day One MCP  -  by kachihro"; echo; fi
+if [ "$FANCY" = 1 ]; then printf '  %s ' "$(icon book)"; col 93 "Day One MCP"; printf '  \033[90mby kachihro %s\033[0m\n' "$(icon heart)"
+else col 93 "  Day One MCP  -  by kachihro"; echo; fi
 printf '  \033[90mgithub.com/%s\033[0m\n' "$REPO"
 
 # ------------------------------------------------------------------------------------------------ uninstall
@@ -454,7 +454,23 @@ if ! command -v npm >/dev/null 2>&1; then
   fi
   command -v npm >/dev/null 2>&1 || { warn "Please install Node.js LTS from https://nodejs.org and run this again."; exit 1; }
 fi
-ok "Node.js $(node --version)"
+# Node.js 18 or newer: the Claude Code plugin's launcher needs it (Node 16 and older are out of support).
+node_major() { node --version 2>/dev/null | sed -n 's/^v\([0-9][0-9]*\).*/\1/p'; }
+NODE_MAJOR="$(node_major)"; NODE_MAJOR="${NODE_MAJOR:-0}"
+if [ "$NODE_MAJOR" -lt 18 ]; then
+  warn "Node.js $(node --version 2>/dev/null) is too old: version 18 or newer is needed (for the Claude Code plugin)."
+  if [ "$OS" = "Darwin" ] && command -v brew >/dev/null 2>&1 && ask "Install the current Node.js now (with Homebrew)?"; then
+    info "Installing Node.js..."
+    quiet brew install node || quiet brew upgrade node || true
+    hash -r
+    NODE_MAJOR="$(node_major)"; NODE_MAJOR="${NODE_MAJOR:-0}"
+  fi
+  if [ "$NODE_MAJOR" -lt 18 ]; then
+    warn "Still using an older Node.js. Install the LTS from https://nodejs.org, then run this again."
+    info "Claude Desktop will still work; the Claude Code plugin needs the newer Node.js."
+  fi
+fi
+[ "$NODE_MAJOR" -ge 18 ] && ok "Node.js $(node --version)"
 
 DAYONE="$(find_dayone || true)"
 if [ -z "$DAYONE" ]; then

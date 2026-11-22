@@ -325,8 +325,8 @@ function Format-Journals($Journals) {
 # Part headings: "Part 1 - Adding Day One MCP" / "Part 2 - Setting it up for you".
 function Part($iconName, $title) {
     Write-Host ''
-    if ($Fancy) { Write-Host "$($Icon[$iconName]) $title " -ForegroundColor Magenta -NoNewline; Write-Host ([string][char]0x2500 * [Math]::Max(4, 52 - $title.Length)) -ForegroundColor DarkGray }
-    else        { Write-Host "== $title ==" -ForegroundColor Magenta }
+    if ($Fancy) { Write-Host "$($Icon[$iconName]) $title " -ForegroundColor Yellow -NoNewline; Write-Host ([string][char]0x2500 * [Math]::Max(4, 52 - $title.Length)) -ForegroundColor DarkGray }
+    else        { Write-Host "== $title ==" -ForegroundColor Yellow }
 }
 
 # Part 2: the personal bits. Your Day One account, encryption key and journals.
@@ -366,8 +366,8 @@ function Invoke-PersonalSetup([string] $DayOneExe) {
 }
 
 Write-Host ''
-if ($Fancy) { Write-Host "  $($Icon.book) Day One MCP  " -ForegroundColor Magenta -NoNewline; Write-Host "by kachihro $($Icon.heart)" -ForegroundColor DarkGray }
-else        { Write-Host '  Day One MCP  -  by kachihro' -ForegroundColor Magenta }
+if ($Fancy) { Write-Host "  $($Icon.book) Day One MCP  " -ForegroundColor Yellow -NoNewline; Write-Host "by kachihro $($Icon.heart)" -ForegroundColor DarkGray }
+else        { Write-Host '  Day One MCP  -  by kachihro' -ForegroundColor Yellow }
 Write-Host '  github.com/kachihro/dayone-mcp' -ForegroundColor DarkGray
 
 # ---------------------------------------------------------------------------------------------- uninstall
@@ -472,7 +472,24 @@ if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
         throw 'Please install Node.js LTS from https://nodejs.org, open a new PowerShell window, and run this again.'
     }
 }
-Ok "Node.js $(& node --version)"
+# Node.js 18 or newer: the Claude Code plugin's launcher needs it (Node 16 and older are out of support).
+function Get-NodeMajor { $v = "$(& node --version 2>$null)"; if ($v -match '^v(\d+)') { return [int]$Matches[1] } return 0 }
+$nodeVersion = "$(& node --version 2>$null)"
+if ((Get-NodeMajor) -lt 18) {
+    Warn "Node.js $nodeVersion is too old: version 18 or newer is needed (for the Claude Code plugin)."
+    if ((Get-Command winget -ErrorAction SilentlyContinue) -and (Ask 'Install the current Node.js LTS now?')) {
+        Info 'Installing Node.js LTS...'
+        $code = Invoke-Native -Quiet { winget install --id OpenJS.NodeJS.LTS --exact --silent --accept-package-agreements --accept-source-agreements }
+        if ($code -ne 0) { Invoke-Native -Quiet { winget upgrade --id OpenJS.NodeJS.LTS --exact --silent --accept-package-agreements --accept-source-agreements } | Out-Null }
+        Refresh-Path
+        $nodeVersion = "$(& node --version 2>$null)"
+    }
+    if ((Get-NodeMajor) -lt 18) {
+        Warn 'Still using an older Node.js. Install the LTS from https://nodejs.org, open a new PowerShell window and run this again.'
+        Info 'Claude Desktop will still work; the Claude Code plugin needs the newer Node.js.'
+    }
+}
+if ((Get-NodeMajor) -ge 18) { Ok "Node.js $nodeVersion" }
 
 $dayoneExe = Find-DayOneExe
 if (-not $dayoneExe) {
