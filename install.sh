@@ -172,17 +172,17 @@ DESKTOP_PROC="${DAYONE_MCP_TEST_DESKTOP_PROC:-}"   # for testing on Linux
 [ "$OS" = "Darwin" ] && [ -z "$DESKTOP_PROC" ] && DESKTOP_PROC="Claude"
 CLOSED_DESKTOP=0; DESKTOP_STILL_OPEN=0
 desktop_running() { [ -n "$DESKTOP_PROC" ] && pgrep -x "$DESKTOP_PROC" >/dev/null 2>&1; }
-close_desktop() { # returns 0 if Claude Desktop isn't running (any more)
+close_desktop() { # $1 = why ("connect Day One"). Returns 0 if Claude Desktop isn't running (any more).
   desktop_running || return 0
-  warn "Claude Desktop is open, and would undo this when it quits."
-  ask "Quit Claude Desktop now? (Claude Code sessions in its Code tab close too)" || return 1
+  info "Claude Desktop needs a quick restart to $1."
+  ask "Restart it now? It reopens when this finishes. (Claude Code sessions in its Code tab will close.)" || return 1
   if [ "$OS" = "Darwin" ]; then osascript -e 'tell application "Claude" to quit' >/dev/null 2>&1 || true; fi
   local i=0
   while desktop_running && [ $i -lt 20 ]; do sleep 0.5; i=$((i + 1)); done
   desktop_running && pkill -x "$DESKTOP_PROC" >/dev/null 2>&1
   i=0; while desktop_running && [ $i -lt 20 ]; do sleep 0.25; i=$((i + 1)); done
   if desktop_running; then warn "Couldn't quit Claude Desktop."; return 1; fi
-  CLOSED_DESKTOP=1; ok "Quit Claude Desktop"
+  CLOSED_DESKTOP=1; ok "Closed Claude Desktop (it reopens at the end)"
   return 0
 }
 open_desktop() {
@@ -381,7 +381,7 @@ if [ "$UNINSTALL" = 1 ]; then
     ok "Removed from Claude Code"
   fi
   if [ -f "$DESKTOP_CFG" ] && command -v node >/dev/null 2>&1 && grep -q "\"$SERVER_NAME\"" "$DESKTOP_CFG"; then
-    if close_desktop; then :; else DESKTOP_STILL_OPEN=1; fi
+    if close_desktop "remove Day One"; then :; else DESKTOP_STILL_OPEN=1; fi
     desktop_config remove && ok "Removed from Claude Desktop"
     [ $DESKTOP_STILL_OPEN = 1 ] && warn "Quit Claude Desktop fully (Cmd+Q), then run uninstall again to be sure."
   fi
@@ -532,7 +532,7 @@ fi
 if [ "$SKIP_DESKTOP" = 0 ]; then
   step desktop "Claude Desktop"
   if [ -d "$(dirname "$DESKTOP_CFG")" ]; then
-    if close_desktop; then :; else DESKTOP_STILL_OPEN=1; fi
+    if close_desktop "connect Day One"; then :; else DESKTOP_STILL_OPEN=1; fi
     desktop_config add || true
     if desktop_config_ok; then ok "Connected"; REGISTERED="$REGISTERED desktop"
     else warn "Couldn't save the Claude Desktop setting. Quit Claude Desktop and run this installer again."; fi

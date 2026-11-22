@@ -129,8 +129,9 @@ function Close-ClaudeDesktop([string] $Why) {
     $procs = Get-ClaudeDesktopProcess
     if ($procs.Count -eq 0) { return $true }
     $codeTab = @(Get-Process -Name claude -ErrorAction SilentlyContinue | Where-Object { $_.Path -match '[\\/]claude-code[\\/]' }).Count -gt 0
-    Warn "Claude Desktop is open, and would undo this when it closes."
-    $q = if ($codeTab) { 'Close Claude Desktop now? (Claude Code sessions in its Code tab close too)' } else { 'Close Claude Desktop now?' }
+    Info "Claude Desktop needs a quick restart to $Why."
+    $q = if ($codeTab) { 'Restart it now? It reopens when this finishes. (Claude Code sessions in its Code tab will close.)' }
+         else { 'Restart it now? It reopens when this finishes.' }
     if (-not (Ask $q)) { return $false }
     foreach ($p in $procs) { try { [void]$p.CloseMainWindow() } catch { } }
     for ($i = 0; $i -lt 12 -and (Get-ClaudeDesktopProcess).Count -gt 0; $i++) { Start-Sleep -Milliseconds 250 }
@@ -139,7 +140,7 @@ function Close-ClaudeDesktop([string] $Why) {
     for ($i = 0; $i -lt 20 -and (Get-ClaudeDesktopProcess).Count -gt 0; $i++) { Start-Sleep -Milliseconds 250 }
     if ((Get-ClaudeDesktopProcess).Count -gt 0) { Warn "Couldn't close Claude Desktop."; return $false }
     $script:ClosedDesktop = $true
-    Ok 'Closed Claude Desktop'
+    Ok 'Closed Claude Desktop (it reopens at the end)'
     return $true
 }
 
@@ -426,7 +427,7 @@ if ($Uninstall) {
     }
     $cfg = Get-DesktopConfigPath
     if ($cfg -and (Test-Path $cfg) -and (Select-String -Path $cfg -Pattern "`"$ServerName`"" -Quiet)) {
-        $closed = Close-ClaudeDesktop
+        $closed = Close-ClaudeDesktop 'remove Day One'
         Update-DesktopConfig $cfg { param($s) $s.Remove($ServerName) }
         Ok 'Removed from Claude Desktop'
         if (-not $closed) { Warn 'Quit Claude Desktop fully (tray icon > Quit), then run uninstall again to be sure.' }
@@ -609,7 +610,7 @@ if (-not $SkipClaudeDesktop) {
     Step desktop 'Claude Desktop'
     $cfg = Get-DesktopConfigPath
     if ($cfg) {
-        $closed = Close-ClaudeDesktop
+        $closed = Close-ClaudeDesktop 'connect Day One'
         Update-DesktopConfig $cfg { param($s) $s[$ServerName] = [ordered]@{ command = $ExePath; args = @() } }
         if (Test-DesktopConfig $cfg) {
             Ok 'Connected'
