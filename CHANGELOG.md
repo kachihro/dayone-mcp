@@ -4,8 +4,9 @@ All notable changes to this project are listed here. Versions follow [semantic v
 
 ## [1.0.4] - 22/11/2026
 
-Works with nvm, smoother updates and Claude Desktop restarts on Windows, one fewer installer question,
-and a new, easier README.
+Claude Desktop on Windows now gets Day One as an extension, with its icon and friendlier read-only tool
+names. Also works with nvm, smoother updates on Windows, one fewer installer question, and a new, easier
+README. (1.0.3 was never released; its changes are here.)
 
 ### README and docs
 - New, shorter README: one command to install, then read-only access to query your journals. Clear
