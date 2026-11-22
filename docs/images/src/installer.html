@@ -1,0 +1,48 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="brand.css">
+<style>
+  .canvas { width: 1100px; padding: 40px; }
+  .terminal { position: relative; z-index: 1; }
+  .terminal pre { font-size: 14.5px; font-variant-ligatures: none; font-feature-settings: "calt" 0, "liga" 0; }
+  .winbar { display:flex; align-items:center; padding: 10px 16px; background:#161b26; border-bottom:1px solid var(--line); }
+  .winbar .tab { display:flex; align-items:center; gap:8px; color: var(--text); font-size:14px; font-weight:600; }
+  .winbar .tab i { width:16px; height:16px; border-radius:3px; background: linear-gradient(135deg,#2b88d8,#142e86); display:inline-block; }
+  .winbar .ctl { margin-left:auto; display:flex; gap:26px; color: var(--text-muted); font-size:15px; }
+  .label { position: relative; z-index: 1; margin-top: 14px; text-align: right; font-size: 13px; color: var(--text-faint); font-weight: 600; }
+</style></head>
+<body>
+<div class="canvas" id="shot">
+  <div class="glow blue"   style="width:380px;height:380px;left:-120px;top:-180px;opacity:.35"></div>
+  <div class="glow purple" style="width:420px;height:420px;right:-160px;bottom:-220px;opacity:.35"></div>
+  <div class="terminal">
+    <div class="winbar"><span class="tab"><i></i>PowerShell</span><span class="ctl"><span>&#8212;</span><span>&#9744;</span><span>&#10005;</span></span></div>
+<pre><span class="t-prompt">PS C:\Users\you&gt;</span> irm https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.ps1 | iex
+
+  <span class="t-magenta">Day One MCP for Claude  -  https://github.com/kachihro/dayone-mcp</span>
+
+<span class="t-cyan">==&gt; Checking Node.js (needed by the Day One CLI)</span>
+    <span class="t-ok">[ok] Node.js v22.12.0</span>
+
+<span class="t-cyan">==&gt; Checking the Day One CLI</span>
+    <span class="t-ok">[ok] Day One CLI: C:\Users\you\AppData\Roaming\npm\node_modules\@dayone\cli\...\dayone.exe</span>
+    <span class="t-ok">[ok] 3 journal(s) available</span>
+
+<span class="t-cyan">==&gt; Installing the dayone-mcp server</span>
+    Downloading https://github.com/kachihro/dayone-mcp/releases/latest/download/dayone-mcp-win-x64.zip
+    <span class="t-ok">[ok] dayone-mcp 1.0.0 installed to C:\Users\you\AppData\Local\Programs\dayone-mcp</span>
+    <span class="t-ok">[ok] OK: Day One CLI found, 3 journal(s) available.</span>
+
+<span class="t-cyan">==&gt; Connecting to Claude Code</span>
+    <span class="t-ok">[ok] Installed the Day One plugin for Claude Code</span>
+
+<span class="t-cyan">==&gt; Connecting to Claude Desktop</span>
+    <span class="t-ok">[ok] Updated C:\Users\you\AppData\Roaming\Claude\claude_desktop_config.json (backup saved as .bak)</span>
+
+  <span class="t-ok">All done!</span>
+  - Claude Desktop: fully quit it (right-click the tray icon &gt; Quit) and reopen it.
+  - Claude Code: start a new session and try /dayone:on-this-day (or /dayone:setup to check everything).
+  Then ask: 'What did I write on this day in previous years?'</pre>
+  </div>
+  <div class="label">Example of what the installer shows on Windows (your paths and versions will differ)</div>
+</div>
+</body></html>

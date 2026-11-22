@@ -1,0 +1,37 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="brand.css">
+<style>
+  .canvas { width: 1280px; padding: 44px 48px 48px; display: grid; grid-template-columns: 1.05fr 1fr; gap: 36px; align-items: center; }
+  .left, .right { position: relative; z-index: 1; }
+  .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  h2 { margin-top: 10px; font-size: 38px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; }
+  .sub { margin-top: 14px; color: var(--text-muted); font-size: 18px; line-height: 1.5; }
+  .install { margin-top: 22px; font-family: "JB Mono", monospace; font-size: 15px; color: #d7dde8; background: #0d1117;
+             border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .install .k { color: var(--accent); font-weight: 700; }
+  .cmds { display: flex; flex-direction: column; gap: 12px; }
+  .cmd { padding: 16px 18px; display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; }
+  .ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 22px;
+         background: rgba(107,163,245,.12); border: 1px solid rgba(107,163,245,.25); }
+  .cmd code { font-family: "JB Mono", monospace; font-size: 16px; font-weight: 700; color: #fff; }
+  .cmd code em { font-style: normal; color: var(--text-faint); font-weight: 400; }
+  .cmd p { margin-top: 3px; color: var(--text-muted); font-size: 15px; }
+</style></head>
+<body>
+<div class="canvas" id="shot">
+  <div class="glow purple" style="width:460px;height:460px;left:-180px;bottom:-260px;opacity:.4"></div>
+  <div class="glow blue"   style="width:420px;height:420px;right:-140px;top:-220px;opacity:.4"></div>
+  <div class="left">
+    <div class="eyebrow">Claude Code plugin</div>
+    <h2>Your journal, one <span class="gradient-text">slash</span> away</h2>
+    <p class="sub">Install it from inside Claude Code. Then type <b style="color:#fff">/dayone</b> to see the commands, or just ask in plain English.</p>
+    <div class="install"><span class="k">/plugin install</span> dayone --marketplace kachihro/dayone-mcp</div>
+  </div>
+  <div class="right cmds">
+    <div class="card cmd"><div class="ico">📅</div><div><code>/dayone:on-this-day <em>[date]</em></code><p>Memories from today in past years</p></div></div>
+    <div class="card cmd"><div class="ico">🔎</div><div><code>/dayone:search <em>&lt;topic&gt;</em></code><p>Tries related words and summarises what it finds</p></div></div>
+    <div class="card cmd"><div class="ico">✨</div><div><code>/dayone:reflect <em>[period]</em></code><p>Highlights, themes and mood for any period</p></div></div>
+    <div class="card cmd"><div class="ico">🩺</div><div><code>/dayone:setup</code><p>Checks everything and tells you what to fix</p></div></div>
+  </div>
+</div>
+</body></html>

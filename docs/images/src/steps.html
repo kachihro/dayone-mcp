@@ -1,0 +1,51 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="brand.css">
+<style>
+  .canvas { width: 1280px; padding: 44px 48px 48px; }
+  .head { position: relative; z-index: 1; display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; }
+  .head h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; }
+  .head .meta { color: var(--text-faint); font-size: 16px; font-weight: 600; }
+  .steps { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .step { padding: 26px 26px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .num { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: 20px;
+         background: var(--accent-gradient); color: #fff; box-shadow: 0 10px 24px rgba(122,63,229,.35); }
+  .step h3 { font-size: 23px; font-weight: 750; letter-spacing: -0.01em; }
+  .step p { color: var(--text-muted); font-size: 16.5px; line-height: 1.5; }
+  .code { margin-top: auto; font-family: "JB Mono", monospace; font-size: 13.5px; line-height: 1.5; color: #d7dde8;
+          background: #0d1117; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; white-space: nowrap; }
+  .code .k { color: var(--accent); }
+  .pill { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+  .pill div { font-size: 15px; font-weight: 600; color: #cfe0ff; background: rgba(107,163,245,.1); border: 1px solid rgba(107,163,245,.25);
+              border-radius: 10px; padding: 10px 12px; }
+  .ask { margin-top: auto; padding: 14px 16px; border-radius: 14px; font-size: 16px; font-weight: 600; color: #fff;
+         background: linear-gradient(100deg, rgba(43,136,216,.95), rgba(122,63,229,.95)); }
+</style></head>
+<body>
+<div class="canvas" id="shot">
+  <div class="glow blue"   style="width:420px;height:420px;left:-140px;top:-200px;opacity:.4"></div>
+  <div class="glow purple" style="width:460px;height:460px;right:-160px;bottom:-260px;opacity:.4"></div>
+
+  <div class="head"><h2>Get started in <span class="gradient-text">3 steps</span></h2><span class="meta">Windows · Mac · Linux</span></div>
+  <div class="steps">
+    <div class="card step">
+      <div class="num">1</div>
+      <h3>Install Claude</h3>
+      <p>Claude Desktop is easiest if you're not a developer. Claude Code works too, or both.</p>
+      <div class="pill"><div>🖥️ Claude Desktop</div><div>⚡ Claude Code</div></div>
+    </div>
+    <div class="card step">
+      <div class="num">2</div>
+      <h3>Paste one line</h3>
+      <p>Open PowerShell (or Terminal on Mac) and paste. It sets everything up and signs you in to Day One.</p>
+      <div class="code"><span class="k">irm</span> https://raw.githubusercontent.com/<br>&nbsp;&nbsp;kachihro/dayone-mcp/main/install.ps1 <span class="k">| iex</span></div>
+      <p style="font-size:13.5px;color:var(--text-faint)">Mac / Linux: a similar <code style="font-family:'JB Mono'">curl … | bash</code> line, in the README</p>
+    </div>
+    <div class="card step">
+      <div class="num">3</div>
+      <h3>Restart &amp; ask</h3>
+      <p>Fully quit and reopen Claude, then ask about your journal in plain English.</p>
+      <div class="ask">What did I write on this day in previous years?</div>
+    </div>
+  </div>
+</div>
+</body></html>

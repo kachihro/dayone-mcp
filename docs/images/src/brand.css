@@ -1,0 +1,91 @@
+/* kachihro brand styles for the README images (colours and font from kachihro.com). */
+@font-face { font-family: "Inter"; src: url("fonts/inter.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "JB Mono"; src: url("fonts/jetbrains-mono.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "JB Mono"; src: url("fonts/jetbrains-mono-bold.woff2") format("woff2"); font-weight: 700; }
+
+:root {
+  --brand-blue: #2b88d8;
+  --brand-purple: #7a3fe5;
+  --brand-indigo: #142e86;
+  --accent: #6ba3f5;
+  --accent-2: #a586f0;
+  --accent-gradient: linear-gradient(100deg, #2b88d8 0%, #7a3fe5 55%, #142e86 100%);
+  --bg: #0a0d16;
+  --bg-elevated: #10141f;
+  --bg-card: #141a28;
+  --line: rgba(163, 172, 196, 0.14);
+  --text: #eef1f8;
+  --text-muted: #a3acc4;
+  --text-faint: #707a98;
+  --ok: #4ade80;
+  --warn: #fbbf24;
+  --cyan: #67d4f2;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: transparent; }
+body {
+  font-family: "Inter", "Segoe UI", sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv11", "ss01";
+}
+
+/* The canvas every image is drawn on. */
+.canvas {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+  border-radius: 24px;
+}
+/* Soft brand-coloured glows in the background. */
+.glow { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.55; pointer-events: none; }
+.glow.blue   { background: var(--brand-blue); }
+.glow.purple { background: var(--brand-purple); }
+.glow.indigo { background: var(--brand-indigo); }
+.grid-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse at 70% 40%, #000 0%, transparent 70%);
+  opacity: 0.5;
+}
+
+.gradient-text {
+  background: linear-gradient(100deg, #6ba3f5 0%, #a586f0 60%, #7f9cf5 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+.kachihro { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.015em; color: var(--text); }
+.kachihro svg { display: block; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-radius: 999px;
+  background: rgba(107, 163, 245, 0.12); border: 1px solid rgba(107, 163, 245, 0.28);
+  color: #cfe0ff; font-size: 15px; font-weight: 600;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+
+/* Terminal windows. */
+.terminal { background: #0d1117; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,.45); }
+.terminal .bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: #161b26; border-bottom: 1px solid var(--line); }
+.terminal .dot { width: 12px; height: 12px; border-radius: 50%; }
+.terminal .title { margin-left: 10px; color: var(--text-muted); font-size: 14px; font-weight: 600; }
+.terminal pre {
+  font-family: "JB Mono", Consolas, monospace; font-size: 15px; line-height: 1.6;
+  padding: 18px 22px; color: #d7dde8; white-space: pre-wrap;
+}
+.t-cyan { color: var(--cyan); font-weight: 700; }
+.t-ok { color: var(--ok); }
+.t-warn { color: var(--warn); }
+.t-muted { color: var(--text-faint); }
+.t-prompt { color: var(--accent); font-weight: 700; }
+.t-magenta { color: #d98bf7; font-weight: 700; }

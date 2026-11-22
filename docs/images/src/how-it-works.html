@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="brand.css">
+<style>
+  .canvas { width: 1280px; padding: 40px 44px 36px; }
+  .row { position: relative; z-index: 1; display: flex; align-items: stretch; gap: 0; }
+  .box { flex: 1; padding: 22px 20px; display: flex; flex-direction: column; gap: 8px; }
+  .box .ico { font-size: 28px; }
+  .box h3 { font-size: 19px; font-weight: 750; }
+  .box p { color: var(--text-muted); font-size: 14.5px; line-height: 1.45; }
+  .box.hl { border: 1px solid transparent;
+            background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box, var(--accent-gradient) border-box; }
+  .arrow { width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; flex: none; }
+  .arrow span { font-size: 12px; font-weight: 700; letter-spacing: .06em; color: var(--accent); text-transform: uppercase; }
+  .arrow svg { display: block; }
+  .zone { position: relative; z-index: 1; margin-top: 18px; display: flex; justify-content: space-between; align-items: center;
+          color: var(--text-faint); font-size: 14px; font-weight: 600; }
+  .zone .pc { display: inline-flex; gap: 8px; align-items: center; padding: 8px 14px; border-radius: 999px;
+              border: 1px dashed rgba(107,163,245,.35); color: #cfe0ff; }
+</style></head>
+<body>
+<div class="canvas" id="shot">
+  <div class="glow blue"   style="width:380px;height:380px;left:-160px;top:-200px;opacity:.35"></div>
+  <div class="glow purple" style="width:380px;height:380px;right:-160px;bottom:-240px;opacity:.35"></div>
+  <div class="row">
+    <div class="card box"><div class="ico">💬</div><h3>Your AI app</h3><p>Claude Code, Claude Desktop, VS Code, Cursor…</p></div>
+    <div class="arrow"><span>MCP</span><svg width="54" height="14"><path d="M2 7h46m-7-6 7 6-7 6" stroke="#6ba3f5" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="card box hl"><div class="ico">🔍</div><h3>Day One MCP</h3><p>This project. Search, On This Day, read. <b style="color:#fff">Read-only.</b></p></div>
+    <div class="arrow"><svg width="54" height="14"><path d="M2 7h46m-7-6 7 6-7 6" stroke="#6ba3f5" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="card box"><div class="ico">⌨️</div><h3>Day One CLI</h3><p>Day One's official command-line program</p></div>
+    <div class="arrow"><svg width="54" height="14"><path d="M2 7h46m-7-6 7 6-7 6" stroke="#6ba3f5" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="card box"><div class="ico">📔</div><h3>Your journals</h3><p>A copy on your computer, kept up to date by <code style="font-family:'JB Mono'">dayone sync</code></p></div>
+  </div>
+  <div class="zone"><span class="pc">🔒 Everything above runs on your computer</span><span>Your password only ever goes to Day One · the AI reads only what you ask about</span></div>
+</div>
+</body></html>

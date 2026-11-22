@@ -1,16 +1,12 @@
-<p align="center"><img src="packaging/mcpb/icon.svg" width="128" alt=""></p>
-
-<h1 align="center">Day One MCP</h1>
-
 <p align="center">
-  <b>Search and reflect on your <a href="https://dayoneapp.com">Day One</a> journal with AI, on Windows, Mac or Linux.</b><br>
-  A Claude Code plugin, and an MCP server for Claude Desktop, VS Code and other AI apps.
+  <img src="docs/images/hero.png" alt="Day One MCP: search and reflect on your Day One journal with AI. Works as a Claude Code plugin, with Claude Desktop, VS Code and any MCP app, on Windows, Mac and Linux. By kachihro." width="100%">
 </p>
 
 <p align="center">
   <a href="https://github.com/kachihro/dayone-mcp/actions/workflows/ci.yml"><img src="https://github.com/kachihro/dayone-mcp/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/kachihro/dayone-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/kachihro/dayone-mcp" alt="Latest release"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT licence"></a>
+  <a href="https://github.com/kachihro/dayone-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/kachihro/dayone-mcp?color=7a3fe5" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2b88d8" alt="MIT licence"></a>
+  <a href="https://www.kachihro.com"><img src="https://img.shields.io/badge/made%20by-kachihro-142e86" alt="Made by kachihro"></a>
 </p>
 
 ---
@@ -33,6 +29,8 @@ It's **read-only** (it can't change or delete anything) and runs **on your own c
 ---
 
 ## Quick start
+
+<p align="center"><img src="docs/images/steps.png" alt="Get started in 3 steps: 1. Install Claude Desktop or Claude Code. 2. Paste one line into PowerShell or Terminal. 3. Restart Claude and ask about your journal." width="100%"></p>
 
 **1. Install the Claude app you want to use first**: [Claude Desktop](https://claude.ai/download)
 (easiest if you're not a developer) or Claude Code. The installer connects whichever ones it finds.
@@ -63,6 +61,12 @@ then press **Enter**:
 curl -fsSL https://raw.githubusercontent.com/kachihro/dayone-mcp/main/install.sh | bash
 ```
 
+</details>
+
+<details>
+<summary>👀 See what the installer looks like</summary>
+<br>
+<img src="docs/images/installer.png" alt="Example installer output in PowerShell: it checks Node.js and the Day One CLI, finds 3 journals, installs the server, installs the Claude Code plugin, connects Claude Desktop, and says All done." width="100%">
 </details>
 
 The installer asks a few yes/no questions. It then runs Day One's own sign-in, where you type your
@@ -102,6 +106,8 @@ The installer does this for you. Everything else in this guide needs it.
 ## Option 1: Claude Code plugin
 
 **Best for Claude Code users.** It adds ready-made commands as well as the journal tools.
+
+<p align="center"><img src="docs/images/plugin.png" alt="Claude Code plugin: install with /plugin install dayone --marketplace kachihro/dayone-mcp. Commands: /dayone:on-this-day, /dayone:search, /dayone:reflect and /dayone:setup." width="100%"></p>
 
 > **Used the installer?** It already installed the plugin. Start a new session and run `/dayone:setup`.
 
@@ -304,15 +310,13 @@ The Day One CLI stays installed. Remove it with `npm uninstall -g @dayone/cli`.
 
 ## Privacy
 
+<p align="center"><img src="docs/images/how-it-works.png" alt="How it works: your AI app talks over MCP to Day One MCP (read-only), which uses the Day One CLI to read the copy of your journals on your computer. Everything runs on your computer." width="100%"></p>
+
 - Runs entirely **on your computer**. This project has no servers and collects no data or analytics.
 - It turns off the Day One CLI's optional telemetry for every command it runs.
 - You type your Day One password into Day One's own sign-in. The AI never sees it.
 - **Note:** the entries the AI reads to answer a question are sent to your AI provider (for
   example Anthropic or GitHub), like anything else you share in a chat. You choose what to ask about.
-
-```
-Your AI app ──MCP──► DayOneMcp ──► Day One CLI ──► journals on your computer ◄── dayone sync ◄── Day One
-```
 
 ---
 
@@ -369,4 +373,12 @@ Automattic**. "Day One" is a trademark of its owner. It uses the official, publi
 
 ## Licence
 
-[MIT](LICENSE)
+[MIT](LICENSE). The README images use the [Inter](https://rsms.me/inter/) and
+[JetBrains Mono](https://www.jetbrains.com/lp/mono/) fonts (SIL Open Font Licence).
+
+---
+
+<p align="center">
+  <a href="https://www.kachihro.com"><img src="docs/images/kachihro-mark.svg" width="36" alt="kachihro"></a><br>
+  <sub>Made with 💜 by <a href="https://www.kachihro.com"><b>kachihro</b></a>, Microsoft 365, SharePoint and Azure development</sub>
+</p>

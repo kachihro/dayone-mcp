@@ -50,6 +50,20 @@ DAYONE_MCP_EXE=$PWD/out/DayOneMcp claude --plugin-dir ./plugin
 `DAYONE_MCP_DOWNLOAD_BASE` points the download at another server, for example a fork's releases.
 Edits to skills take effect after `/reload-plugins`.
 
+### README images and icon
+
+The images in `docs/images/` and the app icon are made from HTML and SVG sources in
+`docs/images/src/` (kachihro brand colours, Inter and JetBrains Mono fonts). Edit the source, then
+re-render (needs Playwright with Chromium):
+
+```
+node docs/images/src/render.mjs              # everything
+node docs/images/src/render.mjs hero steps   # just these
+pngquant --quality=80-95 --force --ext .png docs/images/*.png   # optional: shrink them
+```
+
+The example journal text in the images is made up. Never use real journal entries.
+
 ## Guidelines
 
 - Keep tools **read-only** unless there's a clear, opt-in reason not to. People's journals are precious.
